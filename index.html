@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RutaTotal 360 & Órbita | El Futuro de la Logística</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --brand-emerald: #10b981;
+            --brand-blue: #3a3f47ff;
+            --brand-purple: #8b5cf6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+
+        .gradient-rt {
+            background: linear-gradient(135deg, var(--brand-emerald), var(--brand-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-orbita {
+            background: linear-gradient(135deg, var(--brand-blue), var(--brand-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--brand-emerald), #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 0 50px -12px rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #000;
+        }
+
+        /* Estilos del Slider del Hero */
+        .hero-slider-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0f172a;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        /* Controles de Video Personalizados */
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 30;
+        }
+
+        .video-container:hover .video-controls {
+            opacity: 1;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .control-btn:hover {
+            background: rgba(16, 185, 129, 0.4);
+            transform: scale(1.1);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 70px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .package-card {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .package-card:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .package-card.active-rt {
+            border-color: var(--brand-emerald);
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.3);
+        }
+
+        .package-card.active-orbita {
+            border-color: var(--brand-purple);
+            background: rgba(139, 92, 246, 0.08);
+            box-shadow: 0 0 20px -5px rgba(139, 92, 246, 0.3);
+        }
+
+        .badge-rt { background: var(--brand-emerald); color: #020617; }
+        .badge-orbita { background: var(--brand-purple); color: #fff; }
+
+        .orbita-glow {
+            box-shadow: 0 0 40px -10px rgba(139, 92, 246, 0.3);
+        }
+
+        .particles-container {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .avatar-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.8) contrast(1.1);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .avatar-video.loaded {
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500/30">
+
+    <!-- Navegación -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 backdrop-blur-md bg-slate-950/50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-shopping-bag text-2xl logo-icon"></i>
+                <div class="flex flex-col">
+                    <span class="font-black tracking-tighter text-xl leading-none">RUTATOTAL <span class="text-emerald-500">360</span></span>
+                    <span class="text-[9px] font-bold tracking-[0.3em] text-slate-500 uppercase">Tecnología Órbita</span>
+                </div>
+            </div>
+            <a href="#contacto" class="text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-5 py-2.5 rounded-full transition-all uppercase tracking-wider">
+                Agendar Demo
+            </a>
+        </div>
+    </nav>
+
+    <!-- Encabezado Hero -->
+    <header id="hero-header" class="relative min-h-screen flex flex-col justify-center items-center px-6 pt-32 pb-16 overflow-hidden">
+        <div class="absolute top-1/4 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-1/4 -right-24 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]"></div>
+
+        <div class="relative z-10 grid lg:grid-cols-10 gap-6 items-center max-w-[1300px] mx-auto w-full">
+            
+            <div class="lg:col-span-3 text-left reveal">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight relative">
+                    DE LA TIERRA <br>
+                    A LA 
+                    <span class="relative inline-block">
+                        <canvas id="orbita-particles" class="particles-container w-[120%] h-[150%] -top-[25%] -left-[10%]"></canvas>
+                        <span class="gradient-orbita uppercase relative z-10">Órbita.</span>
+                    </span>
+                </h1>
+                <p class="text-xl text-slate-400 mb-8 max-w-md leading-relaxed">
+                    Domina tu operativa con <span class="text-emerald-400 font-bold">RutaTotal 360</span> y escala hacia la inteligencia superior con <span class="text-purple-400 font-bold">Órbita</span>.
+                </p>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 px-5 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 backdrop-blur-sm w-fit">
+                        <i class="fas fa-check-circle text-emerald-500 text-sm"></i>
+                        <span class="text-xs font-medium text-emerald-100">Cero Papel. Control Brutal.</span>
+                    </div>
+                    <a href="#experiencia" class="inline-block bg-white text-slate-950 px-8 py-4 rounded-xl font-bold transition-all hover:scale-105">
+                        Iniciar Evolución
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 reveal flex justify-center lg:justify-end items-stretch gap-2">
+                <!-- Video del Avatar -->
+                <div class="video-container w-[260px] h-[560px] md:w-[320px] md:h-[670px] border-emerald-500/30 shadow-2xl relative bg-slate-900 group">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10"></div>
+                    
+                    <video id="hero-video" class="avatar-video" autoplay loop muted playsinline oncanplay="this.classList.add('loaded')">
+                        <source src="0.mp4" type="video/mp4">
+                    </video>
+
+                    <div class="video-controls">
+                        <button class="control-btn" onclick="togglePlay('hero-video', this)">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-volume-up text-[10px] text-emerald-500"></i>
+                            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0" oninput="setVolume('hero-video', this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slider Lateral -->
+                <div class="hero-slider-container w-[450px] h-[560px] md:w-[550px] md:h-[670px] relative hidden sm:block">
+                    <div class="hero-slide active" style="background-image: url('i1.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i2.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i3.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i4.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i5.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i6.png')"></div>
+                    
+                    <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-slate-950/90 to-transparent z-20">
+                        <p class="text-emerald-500 font-black text-[10px] tracking-widest uppercase mb-1">Ecosistema Digital</p>
+                        <h4 class="text-white font-bold text-sm leading-tight uppercase">Visualización de Operaciones en Tiempo Real</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- RutaTotal 360 -->
+    <section id="experiencia" class="py-24 relative bg-slate-950">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center border-b border-white/5 pb-24">
+                <div class="reveal">
+                    <div class="inline-block px-4 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                        Fases 1 & 2: Control Terrenal
+                    </div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <i class="fas fa-shopping-bag text-3xl logo-icon"></i>
+                        <h2 class="text-4xl md:text-5xl font-black italic tracking-tighter">RUTATOTAL 360</h2>
+                    </div>
+                    <h3 class="text-emerald-500 font-bold text-lg mb-8 uppercase tracking-wide">Pedidos sin contratiempos, control total.</h3>
+                    <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+                        Es el fin de la era analógica. Eliminamos tickets, lapiceras y papel para asegurar un <span class="text-white font-bold underline decoration-emerald-500 decoration-2">flujo de pedidos perfecto</span>.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-start gap-4">
+                            <div class="mt-1 bg-emerald-500/20 p-2 rounded-lg">
+                                <i class="fas fa-ban text-red-500/70"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Adiós al Papel</h4>
+                                <p class="text-slate-400 text-sm">Elimina errores de transcripción y pérdida de facturas.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="mt-1 bg-emerald-500/20 p-2 rounded-lg">
+                                <i class="fas fa-crosshairs text-emerald-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white uppercase text-xs tracking-wider mb-1">Control Brutal</h4>
+                                <p class="text-slate-400 text-sm">Rastro digital exacto, desde la orden al despacho.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="glass-card p-8 rounded-3xl text-center flex flex-col justify-center items-center">
+                        <i class="fas fa-pen-nib text-3xl text-red-500 mb-4 opacity-40"></i>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Estatus Antiguo: Caos Operativo</p>
+                    </div>
+                    <div class="glass-card p-8 rounded-3xl text-center border-emerald-500/30 flex flex-col justify-center items-center">
+                        <i class="fas fa-shopping-bag text-3xl text-emerald-500 mb-4"></i>
+                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">RutaTotal 360: Eficiencia Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Órbita: Visión Global -->
+    <section id="packages-section" class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-purple-600/5"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl mb-16">
+                <div class="inline-block px-4 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                    Modelos de Implementación
+                </div>
+                <h2 class="text-4xl md:text-6xl font-black mb-4 italic tracking-tighter relative inline-block">
+                    EL SALTO A 
+                    <span class="relative inline-block">
+                        <canvas id="orbita-particles-sec" class="particles-container w-[150%] h-[200%] -top-[50%] -left-[25%]"></canvas>
+                        <span class="gradient-orbita uppercase relative z-10">ÓRBITA</span>
+                    </span>
+                </h2>
+                <h3 class="text-purple-400 font-bold text-xl mb-6 uppercase tracking-[0.15em]">Escalabilidad Inteligente</h3>
+                <p class="text-slate-400 text-xl leading-relaxed">
+                    Selecciona el nivel de tecnología que tu empresa requiere hoy. De la validación local al dominio absoluto del mercado con IA.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                <div class="lg:col-span-2 grid md:grid-cols-2 gap-6" id="packages-grid">
+                    <!-- Paquete 01 -->
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem] active-rt" onclick="switchPackage(1, this, 'rt')">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="px-3 py-1 rounded-md badge-rt text-[9px] font-black uppercase tracking-tighter">Fase 01</div>
+                            <span class="text-slate-500 font-mono text-[10px]">BASE ($)</span>
+                        </div>
+                        <h4 class="text-xl font-black mb-2 uppercase">Orden Inmediato</h4>
+                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">LocalStorage / Single User</p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Validación de flujo y UX. Digitalización completa del papel para un orden visual inmediato.</p>
+                        <div class="pt-4 border-t border-white/5">
+                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Concepto: Orden Visual</span>
+                        </div>
+                    </div>
+
+                    <!-- Paquete 02 -->
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem]" onclick="switchPackage(2, this, 'rt')">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="px-3 py-1 rounded-md badge-rt text-[9px] font-black uppercase tracking-tighter">Fase 02</div>
+                            <span class="text-slate-500 font-mono text-[10px]">MULT x2</span>
+                        </div>
+                        <h4 class="text-xl font-black mb-2 uppercase">Control Multidispositivo</h4>
+                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">Firebase / Auth</p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Persistencia en la nube, seguridad y sincronización en tiempo real para múltiples usuarios.</p>
+                        <div class="pt-4 border-t border-white/5">
+                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Concepto: Datos en la Nube</span>
+                        </div>
+                    </div>
+
+                    <!-- Paquete 03 -->
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem] border-purple-500/20" onclick="switchPackage(3, this, 'orbita')">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="px-3 py-1 rounded-md badge-orbita text-[9px] font-black uppercase tracking-tighter">Fase 03</div>
+                            <span class="text-slate-500 font-mono text-[10px]">MULT x5</span>
+                        </div>
+                        <h4 class="text-xl font-black mb-2 uppercase italic">Trazabilidad 360°</h4>
+                        <p class="text-purple-300 text-xs font-bold mb-3 uppercase tracking-tighter">App Repartidor (PWA)</p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Control total de la última milla. Seguimiento en tiempo real y cierre de ciclo de entrega.</p>
+                        <div class="pt-4 border-t border-white/5">
+                            <span class="text-[9px] font-bold text-purple-400 uppercase tracking-widest">Concepto: App de Repartidor</span>
+                        </div>
+                    </div>
+
+                    <!-- Paquete 04 -->
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem] border-purple-500/20" onclick="switchPackage(4, this, 'orbita')">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="px-3 py-1 rounded-md badge-orbita text-[9px] font-black uppercase tracking-tighter">Fase 04</div>
+                            <span class="text-slate-500 font-mono text-[10px]">MULT x10</span>
+                        </div>
+                        <h4 class="text-xl font-black mb-2 uppercase italic">Inteligencia de Negocio</h4>
+                        <p class="text-purple-300 text-xs font-bold mb-3 uppercase tracking-tighter">Dashboard de Dueño + IA</p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Predicción de demanda y reportes automáticos con IA para la toma de decisiones críticas.</p>
+                        <div class="pt-4 border-t border-white/5">
+                            <span class="text-[9px] font-bold text-purple-400 uppercase tracking-widest">Concepto: Dashboard con IA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:sticky lg:top-32">
+                    <div id="video-wrapper" class="video-container w-full h-[670px] max-w-[320px] mx-auto border-emerald-500/30 transition-all duration-500 bg-slate-900 group">
+                         <div class="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center pointer-events-none" id="package-video-display"></div>
+                         <video id="dynamic-avatar-video" class="avatar-video" autoplay loop muted playsinline oncanplay="this.classList.add('loaded')">
+                            <source src="1.mp4" type="video/mp4">
+                        </video>
+                        
+                        <div class="video-controls">
+                            <button class="control-btn" onclick="togglePlay('dynamic-avatar-video', this)">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-volume-up text-[10px] text-emerald-500" id="vol-icon-avatar"></i>
+                                <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0" oninput="setVolume('dynamic-avatar-video', this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <h5 class="text-white font-black uppercase text-sm tracking-widest" id="current-status-name">Orden Inmediato</h5>
+                        <p class="text-slate-500 text-[10px] uppercase tracking-[0.3em] mt-1 italic">Validación de flujo local</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer id="contacto" class="py-32 relative overflow-hidden bg-slate-950 border-t border-white/5">
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <h2 class="text-4xl md:text-7xl font-black mb-12 max-w-5xl mx-auto leading-[0.9] italic tracking-tighter uppercase">El próximo nivel de tu negocio empieza aquí.</h2>
+            <div class="max-w-md mx-auto">
+                <button onclick="handleContact()" class="w-full bg-emerald-500 text-slate-950 hover:bg-white font-black py-6 rounded-2xl text-xl transition-all shadow-2xl shadow-emerald-500/20 uppercase tracking-tighter">
+                    Activar Ahora
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function initHeroSlider() {
+            const slides = document.querySelectorAll('.hero-slide');
+            let currentSlide = 0;
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 3000); 
+            
+            const heroVideo = document.getElementById('hero-video');
+            heroVideo.muted = true;
+            heroVideo.volume = 0;
+        }
+
+        function togglePlay(id, btn) {
+            const video = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            if (video.paused) {
+                video.play();
+                icon.className = 'fas fa-pause';
+            } else {
+                video.pause();
+                icon.className = 'fas fa-play';
+            }
+        }
+
+        function setVolume(id, val) {
+            const video = document.getElementById(id);
+            video.volume = val;
+            video.muted = (val == 0);
+        }
+
+        function initParticles(canvasId, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const particleCount = 40;
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5;
+                    this.speedX = (Math.random() - 0.5) * 0.8;
+                    this.speedY = (Math.random() - 0.5) * 0.8;
+                    this.life = Math.random() * 0.5 + 0.5;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+                }
+                draw() {
+                    ctx.fillStyle = color;
+                    ctx.globalAlpha = this.life;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            function init() {
+                resize();
+                particles = [];
+                for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            window.addEventListener('resize', resize);
+            init();
+            animate();
+        }
+
+        const packageData = {
+            1: { brand: "Orden Inmediato", subtitle: "Validación de flujo local", video: "1.mp4" },
+            2: { brand: "Control Multidispositivo", subtitle: "Sincronización en la nube", video: "2.mp4" },
+            3: { brand: "Trazabilidad 360°", subtitle: "Control de última milla", video: "3.mp4" },
+            4: { brand: "Inteligencia de Negocio", subtitle: "Toma de decisiones con IA", video: "4.mp4" }
+        };
+
+        function switchPackage(id, element, type) {
+            document.querySelectorAll('.package-card').forEach(card => card.classList.remove('active-rt', 'active-orbita'));
+            const wrapper = document.getElementById('video-wrapper');
+            const statusSubtitle = document.querySelector('#current-status-name + p');
+            const videoElem = document.getElementById('dynamic-avatar-video');
+            if(type === 'rt') {
+                element.classList.add('active-rt');
+                wrapper.className = "video-container w-full h-[670px] max-w-[320px] mx-auto border-emerald-500/40 transition-all duration-500 shadow-emerald-500/10 group";
+            } else {
+                element.classList.add('active-orbita');
+                wrapper.className = "video-container w-full h-[670px] max-w-[320px] mx-auto border-purple-500/40 transition-all duration-500 orbita-glow group";
+            }
+            const data = packageData[id];
+            document.getElementById('current-status-name').innerText = data.brand;
+            statusSubtitle.innerText = data.subtitle;
+            if (videoElem.src.indexOf(data.video) === -1) {
+                videoElem.classList.remove('loaded');
+                videoElem.src = data.video;
+                // Al cambiar de paquete, solo reproducimos si la sección es visible
+                const section = document.getElementById('packages-section');
+                const rect = section.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom >= 0) {
+                    videoElem.play().catch(() => {});
+                }
+            }
+        }
+
+        // --- LÓGICA DE AUTO-PAUSA POR SCROLL ---
+        function initVideoObservers() {
+            const heroVideo = document.getElementById('hero-video');
+            const dynamicVideo = document.getElementById('dynamic-avatar-video');
+
+            const observerOptions = {
+                threshold: 0.1 // 10% de visibilidad mínimo
+            };
+
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target;
+                    const btn = video.closest('.video-container').querySelector('.control-btn i');
+                    
+                    if (!entry.isIntersecting) {
+                        // Si el video sale de vista, pausar
+                        if (!video.paused) {
+                            video.pause();
+                            if (btn) btn.className = 'fas fa-play';
+                        }
+                    } else {
+                        // Si vuelve a vista, opcionalmente podrías darle play, 
+                        // pero por UX es mejor dejarlo pausado si el usuario lo pausó.
+                        // Solo garantizamos que el autoplay (muted) se mantenga si aplica.
+                    }
+                });
+            }, observerOptions);
+
+            videoObserver.observe(heroVideo);
+            videoObserver.observe(dynamicVideo);
+        }
+
+        window.onload = function() {
+            initParticles('orbita-particles', '#8b5cf6');
+            initParticles('orbita-particles-sec', '#a855f7');
+            initHeroSlider();
+            initVideoObservers(); // Iniciar observadores de video
+
+            const dynamicVideo = document.getElementById('dynamic-avatar-video');
+            dynamicVideo.muted = true;
+            dynamicVideo.volume = 0;
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        function handleContact() {
+            const activeCardElement = document.querySelector('.package-card.active-rt, .package-card.active-orbita');
+            const plan = activeCardElement ? activeCardElement.querySelector('h4').innerText : "RutaTotal 360";
+            const msg = encodeURIComponent(`Hola WebMaster. Quiero escalar el estatus de mi negocio. Me interesa activar el plan: ${plan}.`);
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+    </script>
+</body>
+</html>

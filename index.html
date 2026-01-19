@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
-        
+
         :root {
             --brand-emerald: #10b981;
             --brand-blue: #3a3f47ff;
@@ -68,14 +69,16 @@
             background-repeat: no-repeat;
         }
 
-        .hero-slide.active { opacity: 1; }
+        .hero-slide.active {
+            opacity: 1;
+        }
 
         .video-controls {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
             padding: 20px;
             display: flex;
             align-items: center;
@@ -85,7 +88,9 @@
             z-index: 30;
         }
 
-        .video-container:hover .video-controls { opacity: 1; }
+        .video-container:hover .video-controls {
+            opacity: 1;
+        }
 
         .control-btn {
             background: rgba(255, 255, 255, 0.1);
@@ -155,7 +160,10 @@
             box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.3);
         }
 
-        .badge-rt { background: var(--brand-emerald); color: #020617; }
+        .badge-rt {
+            background: var(--brand-emerald);
+            color: #020617;
+        }
 
         .avatar-video {
             width: 100%;
@@ -166,13 +174,16 @@
             transition: opacity 0.5s ease;
         }
 
-        .avatar-video.loaded { opacity: 1; }
+        .avatar-video.loaded {
+            opacity: 1;
+        }
 
         /* Estilos rediseñados para la sección de transformación */
         .transformation-video-wrapper {
             display: flex;
             gap: 20px;
-            align-items: stretch; /* Esto iguala las alturas de los hijos */
+            align-items: stretch;
+            /* Esto iguala las alturas de los hijos */
         }
 
         .transformation-avatar-box {
@@ -190,19 +201,21 @@
             flex-direction: column;
             justify-content: center;
             position: relative;
-            
+
         }
 
         .package-video {
             display: block;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* llena el contenedor sin barras negras */
-            object-position: center center; /* centra el encuadre */
+            object-fit: cover;
+            /* llena el contenedor sin barras negras */
+            object-position: center center;
+            /* centra el encuadre */
             background: #000;
             border-radius: 12px;
             transition: opacity 0.5s ease;
-            
+
         }
 
         .slider-nav-btn {
@@ -225,14 +238,36 @@
             opacity: 0;
         }
 
-        .hero-slider-container:hover .slider-nav-btn { opacity: 1; }
-        .slider-nav-btn:hover { background: var(--brand-emerald); color: #020617; transform: translateY(-50%) scale(1.1); }
-        .slider-nav-btn.prev { left: 16px; }
-        .slider-nav-btn.next { right: 16px; }
+        .hero-slider-container:hover .slider-nav-btn {
+            opacity: 1;
+        }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        .slider-nav-btn:hover {
+            background: var(--brand-emerald);
+            color: #020617;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-nav-btn.prev {
+            left: 16px;
+        }
+
+        .slider-nav-btn.next {
+            right: 16px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
 
         /* Estilos para el polvo */
         #dust-canvas {
@@ -244,53 +279,473 @@
             pointer-events: none;
             z-index: 5;
         }
+
         .title-container {
             position: relative;
             display: inline-block;
         }
+
+        /* Antigravity Section Styles */
+        #antigravidez {
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .orbit-system {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            /* Adjust as needed */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .core-bible {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #10b981 0%, #064e3b 80%);
+            border-radius: 50%;
+            position: absolute;
+            z-index: 10;
+            box-shadow: 0 0 50px var(--brand-emerald), inset 0 0 20px #a7f3d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: core-pulse 3s infinite ease-out;
+            /* Match satellite timing */
+        }
+
+        .core-bible i {
+            font-size: 3rem;
+            color: #ecfdf5;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+
+        .satellite-wrapper {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Mobile adjustment for wrapper */
+        @media (max-width: 768px) {
+            .satellite-wrapper {
+                /* Reset for grid */
+                position: relative;
+                transform: none !important;
+                margin: 0 auto;
+            }
+        }
+
+        .satellite {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            /* Animation will be applied here via JS or CSS class */
+        }
+
+        .satellite:hover {
+            transform: scale(1.2);
+            border-color: #34d399;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+            z-index: 20;
+            background: rgba(16, 185, 129, 0.1);
+            animation-play-state: paused;
+        }
+
+        .satellite i {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            transition: color 0.3s;
+        }
+
+        .satellite:hover i {
+            color: #f8fafc;
+        }
+
+        /* Order State (Circular Orbit) */
+        .orbit-ring {
+            position: absolute;
+            border: 1px dashed rgba(16, 185, 129, 0.1);
+            border-radius: 50%;
+            width: 500px;
+            height: 500px;
+            opacity: 0;
+            transition: opacity 2s;
+            pointer-events: none;
+        }
+
+        .orbit-system.ordered .orbit-ring {
+            opacity: 1;
+        }
+
+        /* Updated Core Pulse to Sync with Satellites */
+        @keyframes core-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6), inset 0 0 20px #a7f3d0;
+                transform: scale(1);
+            }
+
+            70% {
+                box-shadow: 0 0 0 30px rgba(16, 185, 129, 0), inset 0 0 30px #d1fae5;
+                transform: scale(1.05);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), inset 0 0 20px #a7f3d0;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes float-satellite {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* ANTIGRAVITY NEW STYLES */
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes counter-spin {
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        @keyframes emerald-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .orbit-system.rotating {
+            animation: spin 60s linear infinite;
+        }
+
+        .satellite-rotator {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orbit-system.rotating .satellite-rotator {
+            animation: counter-spin 60s linear infinite;
+        }
+
+        /* Pause orbit on hover */
+        .orbit-system.paused,
+        .orbit-system.paused .satellite-rotator {
+            animation-play-state: paused !important;
+        }
+
+        .satellite {
+            /* Existing styles preserved */
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+
+            /* New: Ambient Pulse */
+            animation: emerald-pulse 3s infinite;
+        }
+
+        .satellite-tooltip {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(2, 6, 23, 0.95);
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            opacity: 0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+            visibility: hidden;
+        }
+
+        .satellite:hover .satellite-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+
+        .modal-content {
+            width: 90%;
+            max-width: 900px;
+            background: #0f172a;
+            /* Slate 900 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* Slider Component */
+        .comparison-slider {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .before-image,
+        .after-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* The container for the "After" image that we resize */
+        .after-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            /* Initial split */
+            height: 100%;
+            overflow: hidden;
+            border-right: 2px solid white;
+            z-index: 2;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* Matches after-container width */
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            z-index: 3;
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .slider-handle i {
+            color: #020617;
+            font-size: 14px;
+        }
+
+        .slider-label {
+            position: absolute;
+            top: 20px;
+            padding: 4px 12px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .label-before {
+            right: 20px;
+            background: rgba(239, 68, 68, 0.6);
+            /* Red */
+        }
+
+        .label-after {
+            left: 20px;
+            background: rgba(16, 185, 129, 0.6);
+            /* Emerald */
+            z-index: 10;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent);
+        }
+
+        .modal-body {
+            /* padding: 0;  Slider takes full width or maybe some padding */
+        }
+
+        .modal-footer {
+            padding: 20px;
+            background: #020617;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .orbit-system {
+                height: auto;
+                min-height: 600px;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 40px 20px;
+                align-content: center;
+            }
+
+            .core-bible {
+                position: relative;
+                grid-column: span 2;
+                margin: 0 auto 30px;
+                width: 100px;
+                height: 100px;
+            }
+
+            .satellite-wrapper {
+                position: relative;
+                /* Reset absolute positioning for mobile grid flow */
+                top: auto !important;
+                left: auto !important;
+                transform: none !important;
+                margin: 0 auto;
+            }
+
+            .orbit-ring {
+                display: none;
+            }
+        }
     </style>
 </head>
+
 <body class="antialiased selection:bg-emerald-500/30">
 
     <!-- Navegación -->
- <!-- Navegación Adaptada: RutaTotal 360 -->
-<nav class="fixed top-0 w-full z-50 px-6 py-4 backdrop-blur-md bg-slate-950/70 border-b border-white/10">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <!-- Logo y Concepto de Control -->
-        <div class="flex items-center gap-4">
-            <!-- Icono de Radar/Control (Sustituye a la bolsa genérica para reflejar "Torre de Control") -->
-            <div class="relative flex items-center justify-center">
-                <i class="fas fa-satellite-dish text-2xl text-emerald-500 logo-icon animate-pulse-slow"></i>
-                <span class="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]"></span>
-            </div>
-            
-            <div class="flex flex-col">
-                <span class="font-black tracking-tighter text-2xl leading-none text-white">
-                    RUTATOTAL <span class="text-emerald-500">360</span>
-                </span>
-                <!-- Subtexto con Copywriting de Impacto basado en las fuentes -->
-                <span class="text-[10px] font-bold tracking-[0.25em] text-slate-400 uppercase">
-                    Pedidos sin contratiempos, <span class="text-emerald-500/80">Control Brutal.</span>
-                </span>
-            </div>
-        </div>
+    <!-- Navegación Adaptada: RutaTotal 360 -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 backdrop-blur-md bg-slate-950/70 border-b border-white/10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo y Concepto de Control -->
+            <div class="flex items-center gap-4">
+                <!-- Icono de Radar/Control (Sustituye a la bolsa genérica para reflejar "Torre de Control") -->
+                <div class="relative flex items-center justify-center">
+                    <i class="fas fa-satellite-dish text-2xl text-emerald-500 logo-icon animate-pulse-slow"></i>
+                    <span
+                        class="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]"></span>
+                </div>
 
-        <!-- Acciones Rápidas 
+                <div class="flex flex-col">
+                    <span class="font-black tracking-tighter text-2xl leading-none text-white">
+                        RUTATOTAL <span class="text-emerald-500">360</span>
+                    </span>
+                    <!-- Subtexto con Copywriting de Impacto basado en las fuentes -->
+                    <span class="text-[10px] font-bold tracking-[0.25em] text-slate-400 uppercase">
+                        Pedidos sin contratiempos, <span class="text-emerald-500/80">Control Brutal.</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas 
         <div class="flex items-center gap-6">
             
             <div-- class="hidden md:flex gap-6 text-[11px] font-bold uppercase tracking-widest text-slate-300">
                 <a href="#fortalezas" class="hover:text-emerald-500 transition-colors">Fortalezas</a>
                 <a href="#fases" class="hover:text-emerald-500 transition-colors">Fases 01 & 02</a>
             </div-->
-            
+
             <!-- Botón de Acción Principal (Call to Action) -->
-            <a href="#contacto" class="group relative text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-lg transition-all uppercase tracking-tighter overflow-hidden">
+            <a href="#contacto"
+                class="group relative text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-6 py-3 rounded-lg transition-all uppercase tracking-tighter overflow-hidden">
                 <span class="relative z-10">Solicitar Demo Gratis</span>
-                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div
+                    class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                </div>
             </a>
         </div>
-    </div>
-</nav>
+        </div>
+    </nav>
 
     <!-- Encabezado Hero -->
     <header class="relative min-h-screen flex flex-col justify-center items-center px-6 pt-32 pb-16 overflow-hidden">
@@ -301,40 +756,54 @@
                 <div class="title-container">
                     <!-- Canvas para el efecto de tierra/polvo -->
                     <canvas id="dust-canvas"></canvas>
-                    <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-[1.1] tracking-tight relative z-10">
-                        RUTATOTAL <br>
-                        <span class="gradient-rt uppercase">360</span>
+                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-[1.1] tracking-tight relative z-10">
+                        ¿EL CAOS DE LAS 10 PM <br> TE ESTÁ <span
+                            class="text-red-500/90 underline decoration-red-900/50 decoration-4 underline-offset-4">ROBANDO
+                            PLATA</span>?
                     </h1>
                 </div>
-                 <p class="text-xl text-slate-400 mb-8 max-w-md leading-relaxed">
-                    Domina tu operativa con <span class="text-emerald-400 font-bold">RutaTotal 360</span>. La herramienta definitiva para monitorear pedidos y deliveries sin margen de error.
+                <p class="text-xl text-slate-400 mb-8 max-w-md leading-relaxed">
+                    El papel te funciona... hasta que tenés 20 pedidos y falta uno. Transformá tu mostrador en una <span
+                        class="text-emerald-400 font-bold">Torre de Control</span> y eliminá los gritos en 24 horas.
                 </p>
                 <div class="space-y-4">
-                    <div class="flex items-center gap-3 px-5 py-3 border border-emerald-500/20 rounded-xl bg-emerald-500/5 backdrop-blur-sm w-fit">
-                        <i class="fas fa-eye text-emerald-500 text-sm"></i>
-                        <span class="text-xs font-medium text-emerald-100">Cero papel, control brutal</span>
+                    <div
+                        class="flex items-center gap-3 px-5 py-3 border border-red-500/20 rounded-xl bg-red-900/10 backdrop-blur-sm w-fit">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-sm"></i>
+                        <span class="text-xs font-bold text-red-200">El error humano te cuesta clientes.</span>
                     </div>
-                    <a href="#experiencia" class="inline-block bg-white text-slate-950 px-8 py-4 rounded-xl font-bold transition-all hover:scale-105">
-                        Ver Fortalezas
+
+                    <a href="#contacto"
+                        class="group relative inline-flex items-center gap-3 bg-white text-slate-950 px-8 py-4 rounded-xl font-black transition-all hover:scale-105 overflow-hidden">
+                        <span class="relative z-10 uppercase tracking-tight">DESACTIVAR EL CAOS (Demo)</span>
+                        <div
+                            class="absolute inset-0 bg-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        </div>
+                        <i class="fas fa-arrow-right relative z-10 group-hover:translate-x-1 transition-transform"></i>
                     </a>
                 </div>
             </div>
 
             <div class="lg:col-span-7 reveal flex justify-center lg:justify-end items-stretch gap-2">
-                <div class="video-container w-[260px] h-[560px] md:w-[320px] md:h-[550px] border-emerald-500/30 shadow-2xl relative bg-slate-900 group">
-                    <video id="hero-video" class="avatar-video" autoplay loop muted playsinline oncanplay="this.classList.add('loaded')">
+                <div
+                    class="video-container w-[260px] h-[560px] md:w-[320px] md:h-[550px] border-emerald-500/30 shadow-2xl relative bg-slate-900 group">
+                    <video id="hero-video" class="avatar-video" autoplay loop muted playsinline
+                        oncanplay="this.classList.add('loaded')">
                         <source src="0.mp4" type="video/mp4">
                     </video>
                     <div class="video-controls">
-                        <button class="control-btn" onclick="togglePlay('hero-video', this)"><i class="fas fa-pause"></i></button>
+                        <button class="control-btn" onclick="togglePlay('hero-video', this)"><i
+                                class="fas fa-pause"></i></button>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-volume-up text-[10px] text-emerald-500"></i>
-                            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0" oninput="setVolume('hero-video', this.value)">
+                            <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0"
+                                oninput="setVolume('hero-video', this.value)">
                         </div>
                     </div>
                 </div>
 
-                <div class="hero-slider-container w-[450px] h-[560px] md:w-[550px] md:h-[550px] relative hidden sm:block group/slider">
+                <div
+                    class="hero-slider-container w-[450px] h-[560px] md:w-[550px] md:h-[550px] relative hidden sm:block group/slider">
                     <div class="hero-slide active" style="background-image: url('i1.png')"></div>
                     <div class="hero-slide" style="background-image: url('i2.png')"></div>
                     <div class="hero-slide" style="background-image: url('i3.png')"></div>
@@ -343,18 +812,23 @@
                     <div class="hero-slide" style="background-image: url('i6.png')"></div>
                     <div class="hero-slide" style="background-image: url('i7.png')"></div>
                     <div class="hero-slide" style="background-image: url('i8.png')"></div>
-                       <div class="hero-slide" style="background-image: url('i9.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i9.png')"></div>
                     <div class="hero-slide" style="background-image: url('i10.png')"></div>
                     <div class="hero-slide" style="background-image: url('i11.png')"></div>
                     <div class="hero-slide" style="background-image: url('i12.png')"></div>
-                     <div class="hero-slide" style="background-image: url('i13.png')"></div>
+                    <div class="hero-slide" style="background-image: url('i13.png')"></div>
                     <div class="hero-slide" style="background-image: url('i14.png')"></div>
                     <div class="hero-slide" style="background-image: url('i15.png')"></div>
-                    <button class="slider-nav-btn prev" onclick="manualNav(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <button class="slider-nav-btn next" onclick="manualNav(1)"><i class="fas fa-chevron-right"></i></button>
-                    <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-slate-950/90 to-transparent z-20 text-right">
-                        <p class="text-emerald-500 font-black text-[10px] tracking-widest uppercase mb-1">Control de Monitoreo</p>
-                        <h4 class="text-white font-bold text-sm leading-tight uppercase">Dashboard Proactivo en Pantalla</h4>
+                    <button class="slider-nav-btn prev" onclick="manualNav(-1)"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button class="slider-nav-btn next" onclick="manualNav(1)"><i
+                            class="fas fa-chevron-right"></i></button>
+                    <div
+                        class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-slate-950/90 to-transparent z-20 text-right">
+                        <p class="text-emerald-500 font-black text-[10px] tracking-widest uppercase mb-1">Control de
+                            Monitoreo</p>
+                        <h4 class="text-white font-bold text-sm leading-tight uppercase">Dashboard Proactivo en Pantalla
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -367,9 +841,10 @@
             <div class="mb-20 text-center reveal">
                 <h2 class="text-3xl md:text-5xl font-black italic mb-6">EL PODER DE LA INFORMACIÓN AL INSTANTE</h2>
                 <p class="text-slate-400 max-w-3xl mx-auto text-lg leading-relaxed">
-                    Basta de preguntas al aire, papel y lápicera. El monitor de pedidos vincula automáticamente el ticket ID con el repartidor asignado, 
+                    Basta de preguntas al aire, papel y lápicera. El monitor de pedidos vincula automáticamente el
+                    ticket ID con el repartidor asignado,
                     reemplazando tickets físicos por una interfaz digital que no solo ahorra espacio, 
-sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</span>
+                    sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</span>
                 </p>
                 <!--p class="text-slate-400 max-w-3xl mx-auto text-lg leading-relaxed">
                     Basta de preguntas al aire, papel y lapicera. El monitor de pedidos vincula automáticamente el ticket ID con el repartidor asignado, 
@@ -383,58 +858,182 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
                         <i class="fas fa-desktop text-3xl logo-icon"></i>
                         <h2 class="text-4xl font-black italic tracking-tighter">CONSOLA DE CONTROL</h2>
                     </div>
-                    
+
                     <div class="space-y-10">
-                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-emerald-500/30">
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-emerald-500/30">
                             <div>
-                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Monitor de Pedidos Proactivo</h4>
-                                <p class="text-slate-400 text-sm">Muestra en tiempo real el estado de cada pedido. Identifica visualmente qué pedidos están en preparación, listos para salir o en camino con un responsable asignado.</p>
+                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Monitor de
+                                    Pedidos Proactivo</h4>
+                                <p class="text-slate-400 text-sm">Muestra en tiempo real el estado de cada pedido.
+                                    Identifica visualmente qué pedidos están en preparación, listos para salir o en
+                                    camino con un responsable asignado.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
                             <div>
-                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Vinculación de IDs en Tiempo Real</h4>
-                                <p class="text-slate-400 text-sm">Ya sea que el pedido entre por WhatsApp o la Web, el sistema lo amarra a un repartidor específico. La auditoría es inmediata y automática.</p>
+                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Vinculación de
+                                    IDs en Tiempo Real</h4>
+                                <p class="text-slate-400 text-sm">Ya sea que el pedido entre por WhatsApp o la Web, el
+                                    sistema lo amarra a un repartidor específico. La auditoría es inmediata y
+                                    automática.</p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
                             <div>
-                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Sincronización de Flota</h4>
-                                <p class="text-slate-400 text-sm">Gestiona quién está trabajando en el turno actual con un solo clic. La consola se adapta al personal activo para una asignación precisa.</p>
+                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Sincronización de
+                                    Flota</h4>
+                                <p class="text-slate-400 text-sm">Gestiona quién está trabajando en el turno actual con
+                                    un solo clic. La consola se adapta al personal activo para una asignación precisa.
+                                </p>
                             </div>
                         </div>
-                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
+                        <div
+                            class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border-l-2 border-slate-700">
                             <div>
-                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Auditoría y Reportes</h4>
-                                <p class="text-slate-400 text-sm">Reportes detallados al final del día para cuadrar pedidos y desempeño de deliveries. Se resuelve el problema de "¿Quién se llevó X pedido?" al mostrar claramente el repartidor asignado a cada identificador.</p>
+                                <h4 class="font-bold text-white uppercase text-sm tracking-wider mb-2">Auditoría y
+                                    Reportes</h4>
+                                <p class="text-slate-400 text-sm">Reportes detallados al final del día para cuadrar
+                                    pedidos y desempeño de deliveries. Se resuelve el problema de "¿Quién se llevó X
+                                    pedido?" al mostrar claramente el repartidor asignado a cada identificador.</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="reveal">
                     <div class="glass-card p-4 rounded-3xl border-emerald-500/20 shadow-2xl">
-                         <video id="scroll-video-1" controls src="S2B.mp4" class="w-full rounded-2xl scroll-video"></video>
-                         <div class="p-6">
-                             <p class="text-emerald-500 font-black text-[11px] uppercase tracking-widest mb-2">Fortaleza Principal</p>
-                             <h3 class="text-xl font-bold">Interfaz Limpia. Operativa Fluida.</h3>
-                             <p class="text-slate-400 text-sm mt-2">Diseñada para evitar distracciones y priorizar la información que el despachador necesita ver de un solo vistazo.</p>
-                         </div>
+                        <video id="scroll-video-1" controls src="S2B.mp4"
+                            class="w-full rounded-2xl scroll-video"></video>
+                        <div class="p-6">
+                            <p class="text-emerald-500 font-black text-[11px] uppercase tracking-widest mb-2">Fortaleza
+                                Principal</p>
+                            <h3 class="text-xl font-bold">Interfaz Limpia. Operativa Fluida.</h3>
+                            <p class="text-slate-400 text-sm mt-2">Diseñada para evitar distracciones y priorizar la
+                                información que el despachador necesita ver de un solo vistazo.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Sección Antigravidez: 10 Mandamientos -->
+    <section id="antigravidez" class="py-32 relative bg-slate-950 overflow-hidden">
+        <div
+            class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-900/20 via-slate-950 to-slate-950">
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div class="mb-16 reveal">
+                <span class="text-emerald-500 font-bold tracking-widest uppercase text-xs mb-2 block">Filosofía
+                    Operativa</span>
+                <h2 class="text-3xl md:text-5xl font-black italic text-white mb-6">LOS 10 MANDAMIENTOS <br> DEL <span
+                        class="text-emerald-500">ORDEN DIGITAL</span></h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">Toca cada satélite para descubrir cómo RutaTotal 360
+                    transforma el caos manual en precisión tecnológica.</p>
+            </div>
+
+            <!-- Orbit System Container -->
+            <div class="orbit-system" id="orbit-system">
+                <div class="orbit-ring"></div>
+
+                <!-- Central Core -->
+                <div class="core-bible">
+                    <div class="relative flex items-center justify-center">
+                        <i
+                            class="fas fa-satellite-dish text-5xl text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]"></i>
+                        <span
+                            class="absolute -top-2 -right-3 w-4 h-4 bg-emerald-400 rounded-full shadow-[0_0_15px_#10b981] animate-ping"></span>
+                        <span
+                            class="absolute -top-2 -right-3 w-4 h-4 bg-emerald-400 rounded-full shadow-[0_0_15px_#10b981]"></span>
+                    </div>
+                </div>
+
+                <!-- Satellites will be injected here by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal 10 Mandamientos -->
+    <div id="commandment-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <span
+                        class="text-emerald-500 text-[10px] font-black uppercase tracking-widest block mb-1">Mandamiento
+                        #<span id="modal-id">01</span></span>
+                    <h3 id="modal-title" class="text-2xl font-bold text-white italic">No preguntarás más</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Comparison Slider -->
+                <div class="comparison-slider" id="comparison-slider">
+                    <!-- Images (Placeholders for now) -->
+                    <!-- Background (Before) -->
+                    <div class="before-image bg-red-900/50 flex items-center justify-center p-8 text-center">
+                        <!-- Content for Before side layout if not strictly image -->
+                        <div class="max-w-xs">
+                            <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-4"></i>
+                            <h4 class="text-red-400 font-bold uppercase mb-2">Caos (Antes)</h4>
+                            <p id="modal-text-before" class="text-white text-sm">Descripción del problema...</p>
+                        </div>
+                    </div>
+
+                    <!-- Foreground (After) -->
+                    <div class="after-container" id="slider-after-container">
+                        <div class="after-image bg-emerald-900/80 flex items-center justify-center p-8 text-center"
+                            style="width: 200vw;">
+                            <!-- width needs to be wider to counter container clip? No, using different layout technique for text -->
+                            <!-- To properly mask the text/content for the 'After' part without distorting it, we need an inner container that is displaced inversely or fixed. 
+                                  For text content: simpler to just have two overlapping divs and clip-path, but clip-based sliders are tricker with complex HTML content.
+                                  Let's stick to width/overflow hidden for the container, and the content inside must be full width of PARENT so it doesn't squash.
+                             -->
+                            <div style="width: 100%; height: 100%; position: absolute; top:0; left:0; width: 100vw; max-width: 900px; display: flex; align-items: center; justify-content: center;"
+                                class="bg-emerald-900/95">
+                                <div class="max-w-xs">
+                                    <i class="fas fa-check-circle text-4xl text-emerald-400 mb-4"></i>
+                                    <h4 class="text-emerald-400 font-bold uppercase mb-2">Orden (Después)</h4>
+                                    <p id="modal-text-after" class="text-white text-sm">Solución RutaTotal...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="slider-label label-after">DESPUÉS</span>
+                    </div>
+
+                    <span class="slider-label label-before">ANTES</span>
+
+                    <!-- Handle -->
+                    <div class="slider-handle" id="slider-handle">
+                        <i class="fas fa-arrows-alt-h"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p class="italic text-xs text-slate-500">Desliza para ver la transformación</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Fases de Implementación - REDISEÑO POTENTE -->
     <section class="py-24 relative overflow-hidden bg-slate-900/50">
         <div class="container mx-auto px-6 relative z-10">
             <div class="max-w-4xl mb-16">
-                <div class="inline-block px-4 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                <div
+                    class="inline-block px-4 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest mb-6">
                     Fases de Lanzamiento
                 </div>
                 <h2 class="text-4xl md:text-6xl font-black mb-4 italic tracking-tighter">TRANSFORMACIÓN DIGITAL</h2>
-                     <p class="text-slate-400 text-xl">Esta tecnología le da al personal del mostrador una consola centralizada para gestionar el ciclo de vida de cada pedido: Cocina, Mostrador, En Viaje y Entregado.</p>
-                
+                <p class="text-slate-400 text-xl">Esta tecnología le da al personal del mostrador una consola
+                    centralizada para gestionar el ciclo de vida de cada pedido: Cocina, Mostrador, En Viaje y
+                    Entregado.</p>
+
                 <!--p class="text-slate-400 text-xl">Tecnología que sincroniza tu logística con la realidad de tu negocio.</p-->
             </div>
 
@@ -442,30 +1041,41 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
                 <!-- Columna de Tarjetas -->
                 <div class="lg:col-span-4 flex flex-col gap-6">
                     <!-- Fase 01 -->
-                    <div class="reveal package-card glass-card p-8 rounded-[2rem] active-rt flex-1" onclick="switchPackage(1, this)">
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem] active-rt flex-1"
+                        onclick="switchPackage(1, this)">
                         <div class="flex justify-between items-start mb-4">
-                            <div class="px-3 py-1 rounded-md badge-rt text-[8px] font-black uppercase tracking-tighter">Fase 01</div>
+                            <div class="px-3 py-1 rounded-md badge-rt text-[8px] font-black uppercase tracking-tighter">
+                                Fase 01</div>
                             <span class="text-slate-500 font-mono text-[10px]">ORGANIZACIÓN</span>
                         </div>
                         <h4 class="text-xl font-black mb-2 uppercase">Consola Local</h4>
-                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">Control de Despacho</p>
-                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Centraliza la información de los repartidores. Valida el flujo de salida de pedidos y elimina el desorden visual.</p>
+                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">Control de Despacho
+                        </p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Centraliza la información de los
+                            repartidores. Valida el flujo de salida de pedidos y elimina el desorden visual.</p>
                         <div class="pt-4 border-t border-white/5">
-                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Enfoque: Claridad Informativa</span>
+                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Enfoque:
+                                Claridad Informativa</span>
                         </div>
                     </div>
 
                     <!-- Fase 02 -->
-                    <div class="reveal package-card glass-card p-8 rounded-[2rem] flex-1" onclick="switchPackage(2, this)">
+                    <div class="reveal package-card glass-card p-8 rounded-[2rem] flex-1"
+                        onclick="switchPackage(2, this)">
                         <div class="flex justify-between items-start mb-4">
-                            <div class="px-3 py-1 rounded-md badge-rt text-[8px] font-black uppercase tracking-tighter">Fase 02</div>
+                            <div class="px-3 py-1 rounded-md badge-rt text-[8px] font-black uppercase tracking-tighter">
+                                Fase 02</div>
                             <span class="text-slate-500 font-mono text-[10px]">CONECTIVIDAD</span>
                         </div>
                         <h4 class="text-xl font-black mb-2 uppercase">Nube Sincronizada</h4>
-                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">Acceso Multi-Pantalla</p>
-                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Sincronización total entre dispositivos. Permite que cualquier terminal autorizada visualice el monitor de pedidos al instante.</p>
+                        <p class="text-slate-300 text-xs font-bold mb-3 uppercase tracking-tighter">Acceso
+                            Multi-Pantalla</p>
+                        <p class="text-slate-400 text-[11px] leading-relaxed mb-4">Sincronización total entre
+                            dispositivos. Permite que cualquier terminal autorizada visualice el monitor de pedidos al
+                            instante.</p>
                         <div class="pt-4 border-t border-white/5">
-                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Enfoque: Acceso Ubicuo</span>
+                            <span class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Enfoque:
+                                Acceso Ubicuo</span>
                         </div>
                     </div>
                 </div>
@@ -475,36 +1085,45 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
                     <div class="transformation-video-wrapper">
                         <!-- Video Avatar -->
                         <div class="video-container transformation-avatar-box border-emerald-500/20 bg-slate-900 group">
-                            <video id="dynamic-avatar-video" class="avatar-video" autoplay loop muted playsinline oncanplay="this.classList.add('loaded')">
+                            <video id="dynamic-avatar-video" class="avatar-video" autoplay loop muted playsinline
+                                oncanplay="this.classList.add('loaded')">
                                 <source src="1.mp4" type="video/mp4">
                             </video>
                             <div class="video-controls">
-                                <button class="control-btn" onclick="togglePlay('dynamic-avatar-video', this)"><i class="fas fa-pause"></i></button>
+                                <button class="control-btn" onclick="togglePlay('dynamic-avatar-video', this)"><i
+                                        class="fas fa-pause"></i></button>
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-volume-up text-[10px] text-emerald-500"></i>
-                                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0" oninput="setVolume('dynamic-avatar-video', this.value)">
+                                    <input type="range" class="volume-slider" min="0" max="1" step="0.1" value="0"
+                                        oninput="setVolume('dynamic-avatar-video', this.value)">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Video Display (Dashboard) -->
                         <div class="transformation-display-box group">
-                            <div class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            
+                            <div
+                                class="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            </div>
+
                             <!-- Video Fase 1 -->
-                            <video id="package-video-1" class="package-video" data-package="1" autoplay loop muted playsinline>
+                            <video id="package-video-1" class="package-video" data-package="1" autoplay loop muted
+                                playsinline>
                                 <source src="n2.mp4" type="video/mp4">
                             </video>
 
                             <!-- Video Fase 2 -->
-                            <video id="package-video-2" class="package-video hidden" style="object-fit: contain;" data-package="2" autoplay loop muted playsinline>
+                            <video id="package-video-2" class="package-video hidden" style="object-fit: contain;"
+                                data-package="2" autoplay loop muted playsinline>
                                 <source src="capcut2.mp4" type="video/mp4">
                             </video>
 
                             <div class="absolute bottom-4 left-0 right-0 px-6 flex justify-between items-end z-10">
                                 <div>
-                                    <h5 class="text-white font-black uppercase text-xs tracking-widest" id="current-status-name">Fase 01: Organización</h5>
-                                    <p class="text-slate-400 text-[9px] uppercase tracking-[0.2em] italic">Visualización Directa en Local</p>
+                                    <h5 class="text-white font-black uppercase text-xs tracking-widest"
+                                        id="current-status-name">Fase 01: Organización</h5>
+                                    <p class="text-slate-400 text-[9px] uppercase tracking-[0.2em] italic">Visualización
+                                        Directa en Local</p>
                                 </div>
                                 <i class="fas fa-expand-alt text-emerald-500/50 text-xs"></i>
                             </div>
@@ -518,14 +1137,18 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
     <!-- Footer -->
     <footer id="contacto" class="py-32 relative overflow-hidden bg-slate-950 border-t border-white/5">
         <div class="container mx-auto px-6 relative z-10 text-center">
-                <h2 class="text-4xl md:text-7xl font-black mb-12 max-w-5xl mx-auto leading-[0.9] italic tracking-tighter uppercase">¿Listo para tomar el control de tus pedidos?</h2>
-       
+            <h2
+                class="text-4xl md:text-7xl font-black mb-12 max-w-5xl mx-auto leading-[0.9] italic tracking-tighter uppercase">
+                ¿Listo para tomar el control de tus pedidos?</h2>
+
             <div class="max-w-md mx-auto">
-                <button onclick="handleContact()" class="w-full bg-emerald-500 text-slate-950 hover:bg-white font-black py-6 rounded-2xl text-xl transition-all shadow-2xl shadow-emerald-500/20 uppercase tracking-tighter">
-                  Contactar Ahora  
+                <button onclick="handleContact()"
+                    class="w-full bg-emerald-500 text-slate-950 hover:bg-white font-black py-6 rounded-2xl text-xl transition-all shadow-2xl shadow-emerald-500/20 uppercase tracking-tighter">
+                    Contactar Ahora
                 </button>
             </div>
-            <p class="mt-12 text-slate-500 text-xs font-bold tracking-[0.4em] uppercase">Control Total | RutaTotal 360 &copy; 2026</p>
+            <p class="mt-12 text-slate-500 text-xs font-bold tracking-[0.4em] uppercase">Control Total | RutaTotal 360
+                &copy; 2026</p>
         </div>
     </footer>
 
@@ -542,7 +1165,7 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
 
         function resizeCanvas() {
             const container = canvas.parentElement;
-            if(!container) return;
+            if (!container) return;
             canvas.width = container.offsetWidth;
             canvas.height = container.offsetHeight;
         }
@@ -555,10 +1178,10 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 3 + 1;
-                this.speedX = Math.random() * 5 + 2; 
+                this.speedX = Math.random() * 5 + 2;
                 this.speedY = (Math.random() - 0.5) * 1;
                 this.opacity = Math.random() * 0.5;
-                this.color = `rgba(${139 + Math.random() * 50}, ${115 + Math.random() * 30}, ${85}, ${this.opacity})`; 
+                this.color = `rgba(${139 + Math.random() * 50}, ${115 + Math.random() * 30}, ${85}, ${this.opacity})`;
             }
             update() {
                 this.x += this.speedX;
@@ -601,7 +1224,7 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
             startSlider();
             const heroVideo = document.getElementById('hero-video');
             if (heroVideo) { heroVideo.muted = true; heroVideo.volume = 0; }
-            
+
             resizeCanvas();
             initDust();
             animateDust();
@@ -622,7 +1245,7 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
 
         function manualNav(direction) {
             changeSlide(direction);
-            startSlider(); 
+            startSlider();
         }
 
         function togglePlay(id, btn) {
@@ -651,23 +1274,23 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
         function switchPackage(id, element) {
             document.querySelectorAll('.package-card').forEach(card => card.classList.remove('active-rt'));
             element.classList.add('active-rt');
-            
+
             const data = packageData[id];
             document.getElementById('current-status-name').innerText = data.brand;
             document.querySelector('#current-status-name + p').innerText = data.subtitle;
-            
+
             const videoElem = document.getElementById('dynamic-avatar-video');
             if (videoElem.src.indexOf(data.video) === -1) {
                 videoElem.classList.remove('loaded');
                 videoElem.src = data.video;
-                videoElem.play().catch(() => {});
+                videoElem.play().catch(() => { });
             }
 
-            document.querySelectorAll('.package-video').forEach(v => { v.classList.add('hidden'); try { v.pause(); } catch(e){} });
+            document.querySelectorAll('.package-video').forEach(v => { v.classList.add('hidden'); try { v.pause(); } catch (e) { } });
             const activeVideo = document.querySelector(`.package-video[data-package="${id}"]`);
             if (activeVideo) {
                 activeVideo.classList.remove('hidden');
-                try { activeVideo.currentTime = 0; activeVideo.play().catch(()=>{}); } catch(e) {}
+                try { activeVideo.currentTime = 0; activeVideo.play().catch(() => { }); } catch (e) { }
             }
         }
 
@@ -677,7 +1300,7 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
                 const video = entry.target;
                 if (entry.isIntersecting) {
                     video.currentTime = 0;
-                    video.play().catch(() => {});
+                    video.play().catch(() => { });
                 } else {
                     video.pause();
                 }
@@ -688,14 +1311,275 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
         }, { threshold: 0.1 });
 
-        window.onload = function() {
+        // --- ANTIGRAVITY SECTION LOGIC ---
+        const commandments = [
+            {
+                id: 1,
+                title: "Estado del Pedido", // Renamed as per prompt list
+                iconHTML: `<div class="relative flex items-center justify-center"><i class="far fa-comment-dots text-lg"></i><i class="fas fa-check absolute -bottom-1 -right-1 text-[10px] text-emerald-400 bg-slate-900 rounded-full border border-slate-900"></i></div>`,
+                before: "El mostrador es un nido de gritos. '¿Te llevaste el de la calle X?'. Incertidumbre constante.",
+                after: "La duda muere. El pedido está amarrado al repartidor en pantalla. Paz Mental."
+            },
+            {
+                id: 2,
+                title: "Fin de la Lapicera",
+                iconHTML: `<i class="fas fa-hand-pointer text-lg"></i>`,
+                before: "Tickets manchados de grasa. Anotar números a mano doble vez. Cero eficiencia.",
+                after: "Drag-and-Drop. El sistema escribe por vos. Más rápido, más limpio."
+            },
+            {
+                id: 3,
+                title: "Cero Papel",
+                iconHTML: `<div class="relative"><i class="fas fa-ticket-alt text-lg transform -rotate-12"></i><i class="fas fa-wind absolute -right-3 top-1 text-[10px] opacity-70"></i></div>`,
+                before: "Tickets que vuelan o se pierden. Dependencia total del papel físico.",
+                after: "Cero tickets viajando. Trazabilidad total digital desde el monitor."
+            },
+            {
+                id: 4,
+                title: "Conteo Automático",
+                iconHTML: `<div class="relative"><i class="fas fa-calculator text-lg text-slate-400"></i><div class="absolute inset-0 flex items-center justify-center"><div class="w-full h-0.5 bg-red-500 transform rotate-45"></div></div></div>`,
+                before: "Contando papeles arrugados a la 1 AM. El cansancio lleva al error.",
+                after: "Reportes instantáneos. Cierre de turno en 30 segundos con conteo exacto."
+            },
+            {
+                id: 5,
+                title: "Dinero Blindado",
+                iconHTML: `<div class="relative flex items-center justify-center"><i class="fas fa-shield-alt text-lg"></i><span class="absolute text-[9px] font-black text-slate-900 pt-0.5">$</span></div>`,
+                before: "Pedidos entregados que se olvidan de cobrar. Dinero que se evapora.",
+                after: "Conciliación Blindada. Cada ID que salió debe ser rendido."
+            },
+            {
+                id: 6,
+                title: "Historial de Viajes",
+                iconHTML: `<i class="fas fa-history text-lg"></i>`,
+                before: "'Esto no me lo diste'. Palabra contra palabra sin pruebas.",
+                after: "Historial Inmutable. Registro exacto de qué llevó cada uno y a qué hora."
+            },
+            {
+                id: 7,
+                title: "No Duplicados",
+                iconHTML: `<div class="flex -space-x-2"><i class="fas fa-ban text-red-500"></i><i class="fas fa-ban text-red-500 opacity-70"></i></div>`,
+                before: "Dos repartidores se llevan el mismo pedido. Pédida doble.",
+                after: "Validación Atómica. El sistema bloquea asignaciones duplicadas."
+            },
+            {
+                id: 8,
+                title: "Respuesta al Cliente",
+                iconHTML: `<div class="relative"><i class="fas fa-headset text-lg"></i><i class="fas fa-wifi absolute -top-2 -right-2 text-[8px] text-emerald-500"></i></div>`,
+                before: "'Ya debe estar por llegar'. Respuestas dudosas que destruyen reputación.",
+                after: "'Salió hace 12 minutos con Juan'. Precisión que fideliza clientes."
+            },
+            {
+                id: 9,
+                title: "Ubicación Exacta",
+                iconHTML: `<i class="fas fa-crosshairs text-lg"></i>`,
+                before: "Revolver montaña de tickets buscando el #145 mientras suena el teléfono.",
+                after: "Ubicación exacta al instante escribiendo solo el ID."
+            },
+            {
+                id: 10,
+                title: "Torre de Control",
+                iconHTML: `<i class="fas fa-broadcast-tower text-lg animate-pulse"></i>`,
+                before: "El 'me olvidé de anotar' es la excusa perfecta en el caos.",
+                after: "Torre de Control. La transparencia es total, la mentira no tiene lugar."
+            }
+        ];
+
+        let satellitesRendered = false;
+
+        function initAntigravity() {
+            const system = document.getElementById('orbit-system');
+            if (!system) return;
+
+            // Render Satellites initially dispersed (Chaos)
+            commandments.forEach((cmd, index) => {
+                // Create Wrapper (Handles Orbit Position)
+                const wrapper = document.createElement('div');
+                wrapper.className = 'satellite-wrapper';
+
+                // Create Rotator (Handles Counter Rotation)
+                const rotator = document.createElement('div');
+                rotator.className = 'satellite-rotator';
+
+                // Create Inner Satellite (Handles Visuals + Float Animation)
+                const el = document.createElement('div');
+                el.className = 'satellite';
+                el.dataset.id = cmd.id;
+                // Use custom iconHTML
+                el.innerHTML = cmd.iconHTML;
+
+                // Add Tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'satellite-tooltip';
+                tooltip.innerText = cmd.title;
+                el.appendChild(tooltip);
+
+                // Interactions
+                el.onclick = () => openCommandmentModal(cmd.id);
+                // Pause rotation on hover
+                el.addEventListener('mouseenter', () => {
+                    document.getElementById('orbit-system').classList.add('paused');
+                });
+                el.addEventListener('mouseleave', () => {
+                    document.getElementById('orbit-system').classList.remove('paused');
+                });
+
+                rotator.appendChild(el);
+                wrapper.appendChild(rotator);
+
+                // Random position for chaos (applied to wrapper)
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 300 + Math.random() * 200; // Far away
+                const x = Math.cos(angle) * dist;
+                const y = Math.sin(angle) * dist;
+
+                wrapper.style.transform = `translate(${x}px, ${y}px)`;
+
+                system.appendChild(wrapper);
+            });
+
+            // Trigger Order Animation
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !satellitesRendered) {
+                        satellitesRendered = true;
+                        animateChaosToOrder();
+                        document.querySelector('.orbit-system').classList.add('ordered');
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(system);
+        }
+
+        function animateChaosToOrder() {
+            const wrappers = document.querySelectorAll('.satellite-wrapper');
+            const total = wrappers.length;
+            const radius = 250; // Orbit radius
+            const isMobile = window.innerWidth < 768;
+
+            if (isMobile) return; // Don't animate orbits on mobile, rely on CSS Grid
+
+            wrappers.forEach((wrapper, index) => {
+                // Calculate position in circle
+                const angle = (index / total) * Math.PI * 2;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+
+                // Apply transition to organized state (Wrapper moves to orbit)
+                setTimeout(() => {
+                    wrapper.style.transition = "transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)";
+                    wrapper.style.transform = `translate(${x}px, ${y}px)`;
+
+                    // Add float animation to INNER element after settling
+                    setTimeout(() => {
+                        const inner = wrapper.querySelector('.satellite');
+                        if (inner) {
+                            // inner.style.animation = `float-satellite ${3 + Math.random()}s ease-in-out infinite alternate`;
+                            // Replacing float with pulse and orbit logic. Float makes orbit jittery.
+                            // inner.style.animationDelay = `${Math.random() * 2}s`;
+                        }
+                    }, 1600);
+                }, 100 * index); // Staggered entry
+            });
+
+            // Start system rotation after chaos settles (approx 2s + 1s stagger = 3s)
+            setTimeout(() => {
+                document.getElementById('orbit-system').classList.add('rotating');
+            }, 3000);
+        }
+
+        // --- MODAL LOGIC & AUDIO ---
+
+        // Simple Audio Context Pulse
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTechPulse() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // Low freq
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1); // Zip up
+
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        function openCommandmentModal(id) {
+            const data = commandments.find(c => c.id === id);
+            if (!data) return;
+
+            document.getElementById('modal-id').innerText = data.id.toString().padStart(2, '0');
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-text-before').innerText = data.before;
+            document.getElementById('modal-text-after').innerText = data.after;
+
+            document.getElementById('commandment-modal').classList.add('active');
+            playTechPulse();
+
+            // Reset Slider
+            updateSlider(50);
+        }
+
+        function closeModal() {
+            document.getElementById('commandment-modal').classList.remove('active');
+        }
+
+        // --- SLIDER LOGIC ---
+        const slider = document.getElementById('comparison-slider');
+        const handle = document.getElementById('slider-handle');
+        const afterContainer = document.getElementById('slider-after-container');
+        let isDragging = false;
+
+        function updateSlider(percent) {
+            if (!handle || !afterContainer) return;
+            handle.style.left = `${percent}%`;
+            afterContainer.style.width = `${percent}%`;
+        }
+
+        if (slider) {
+            slider.addEventListener('mousedown', () => isDragging = true);
+            slider.addEventListener('touchstart', () => isDragging = true);
+
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('touchend', () => isDragging = false);
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const rect = slider.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let percent = (x / rect.width) * 100;
+                percent = Math.max(0, Math.min(100, percent));
+                updateSlider(percent);
+            });
+            window.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const rect = slider.getBoundingClientRect();
+                let x = e.touches[0].clientX - rect.left;
+                let percent = (x / rect.width) * 100;
+                percent = Math.max(0, Math.min(100, percent));
+                updateSlider(percent);
+            });
+        }
+
+        window.onload = function () {
             initHeroSlider();
-            
+            initAntigravity();
+
             document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
             document.querySelectorAll('video').forEach(v => videoScrollObserver.observe(v));
 
             const dynamicVideo = document.getElementById('dynamic-avatar-video');
-            if(dynamicVideo) {
+            if (dynamicVideo) {
                 dynamicVideo.muted = true;
                 dynamicVideo.volume = 0;
             }
@@ -707,4 +1591,5 @@ sino que elimina: <span class="text-emerald-500 font-bold">el error humano.</spa
         }
     </script>
 </body>
+
 </html>

@@ -458,17 +458,15 @@
             }
         }
 
-        @keyframes emerald-pulse {
+        @keyframes emerald-pulse-optimized {
             0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+                transform: scale(1);
+                opacity: 0.6;
             }
 
             100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                transform: scale(1.6);
+                opacity: 0;
             }
         }
 
@@ -499,9 +497,13 @@
             position: relative;
             width: 100%;
             height: 100%;
+            box-sizing: border-box;
+            /* Requested technical fix */
+            padding: 12px;
+            /* Requested breathing room */
             border-radius: 50%;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(8px);
+            background: rgba(30, 41, 59, 0.95);
+            /* More opaque for better perf without blur */
             border: 1px solid rgba(16, 185, 129, 0.3);
             display: flex;
             align-items: center;
@@ -509,9 +511,52 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            outline: none;
+            /* Accessible focus managed below */
+        }
 
-            /* New: Ambient Pulse */
-            animation: emerald-pulse 3s infinite;
+        /* Ensure direct children (icons or wrappers) are centered and contained */
+        .satellite>* {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Desktop-only blur */
+        @media (min-width: 769px) {
+            .satellite {
+                background: rgba(30, 41, 59, 0.8);
+                backdrop-filter: blur(8px);
+            }
+        }
+
+        .satellite i {
+            font-size: 1.4rem;
+            /* Adjusted to fit nicely within padding */
+            color: #94a3b8;
+            transition: color 0.3s;
+            line-height: 1;
+            /* Prevent line-height from adding vertical space */
+        }
+
+        .satellite:hover i {
+            color: #f8fafc;
+        }
+
+        .satellite::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1px solid #10b981;
+            z-index: -1;
+            animation: emerald-pulse-optimized 3s infinite ease-out;
+        }
+
+        .satellite:focus-visible {
+            box-shadow: 0 0 0 2px #ecfdf5, 0 0 0 4px #10b981;
         }
 
         .satellite-tooltip {
@@ -519,7 +564,7 @@
             bottom: -50px;
             left: 50%;
             transform: translateX(-50%) translateY(10px);
-            background: rgba(2, 6, 23, 0.95);
+            /*background: rgba(2, 6, 23, 0.95);*/
             color: #10b981;
             padding: 8px 16px;
             border-radius: 12px;
@@ -530,10 +575,11 @@
             white-space: nowrap;
             opacity: 0;
             transition: all 0.3s ease;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            text-shadow: 0 0 12px rgba(80, 200, 120, 0.8), 0 0 10px rgba(80, 200, 120, 0.5);
+            /*border: 1px solid rgba(16, 185, 129, 0.3);*/
             pointer-events: none;
             z-index: 100;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+            /*box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);*/
             visibility: hidden;
         }
 
@@ -567,9 +613,9 @@
         .comparison-slider {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 500px;
             overflow: hidden;
-            background: #000;
+            background: #020617;
         }
 
         .before-image,
@@ -579,7 +625,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         /* The container for the "After" image that we resize */
@@ -611,6 +657,16 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.1s;
+        }
+
+        .slider-handle:active {
+            cursor: grabbing;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .comparison-slider:active .slider-handle {
+            cursor: grabbing;
         }
 
         .slider-handle i {
@@ -974,34 +1030,14 @@
             <div class="modal-body">
                 <!-- Comparison Slider -->
                 <div class="comparison-slider" id="comparison-slider">
-                    <!-- Images (Placeholders for now) -->
                     <!-- Background (Before) -->
-                    <div class="before-image bg-red-900/50 flex items-center justify-center p-8 text-center">
-                        <!-- Content for Before side layout if not strictly image -->
-                        <div class="max-w-xs">
-                            <i class="fas fa-exclamation-circle text-4xl text-red-500 mb-4"></i>
-                            <h4 class="text-red-400 font-bold uppercase mb-2">Caos (Antes)</h4>
-                            <p id="modal-text-before" class="text-white text-sm">Descripción del problema...</p>
-                        </div>
+                    <div class="before-image-container relative w-full h-full bg-slate-950">
+                        <img id="modal-img-before" src="" class="before-image opacity-60">
                     </div>
 
-                    <!-- Foreground (After) -->
-                    <div class="after-container" id="slider-after-container">
-                        <div class="after-image bg-emerald-900/80 flex items-center justify-center p-8 text-center"
-                            style="width: 200vw;">
-                            <!-- width needs to be wider to counter container clip? No, using different layout technique for text -->
-                            <!-- To properly mask the text/content for the 'After' part without distorting it, we need an inner container that is displaced inversely or fixed. 
-                                  For text content: simpler to just have two overlapping divs and clip-path, but clip-based sliders are tricker with complex HTML content.
-                                  Let's stick to width/overflow hidden for the container, and the content inside must be full width of PARENT so it doesn't squash.
-                             -->
-                            <div style="width: 100%; height: 100%; position: absolute; top:0; left:0; width: 100vw; max-width: 900px; display: flex; align-items: center; justify-content: center;"
-                                class="bg-emerald-900/95">
-                                <div class="max-w-xs">
-                                    <i class="fas fa-check-circle text-4xl text-emerald-400 mb-4"></i>
-                                    <h4 class="text-emerald-400 font-bold uppercase mb-2">Orden (Después)</h4>
-                                    <p id="modal-text-after" class="text-white text-sm">Solución RutaTotal...</p>
-                                </div>
-                            </div>
+                    <div class="after-container border-r-4 border-emerald-500" id="slider-after-container">
+                        <div class="after-image-container relative h-full bg-slate-950" style="width: 100vw; max-width: 900px;">
+                            <video id="modal-video-after" class="after-image opacity-70" autoplay loop muted playsinline></video>
                         </div>
                         <span class="slider-label label-after">DESPUÉS</span>
                     </div>
@@ -1010,7 +1046,7 @@
 
                     <!-- Handle -->
                     <div class="slider-handle" id="slider-handle">
-                        <i class="fas fa-arrows-alt-h"></i>
+                        <i class="fas fa-arrows-alt-h text-emerald-600"></i>
                     </div>
                 </div>
             </div>
@@ -1315,73 +1351,73 @@
         const commandments = [
             {
                 id: 1,
-                title: "Estado del Pedido", // Renamed as per prompt list
+                title: "Estado del Pedido",
                 iconHTML: `<div class="relative flex items-center justify-center"><i class="far fa-comment-dots text-lg"></i><i class="fas fa-check absolute -bottom-1 -right-1 text-[10px] text-emerald-400 bg-slate-900 rounded-full border border-slate-900"></i></div>`,
-                before: "El mostrador es un nido de gritos. '¿Te llevaste el de la calle X?'. Incertidumbre constante.",
-                after: "La duda muere. El pedido está amarrado al repartidor en pantalla. Paz Mental."
+                imgBefore: "i1.png",
+                videoAfter: "diez/v1.mp4"
             },
             {
                 id: 2,
                 title: "Fin de la Lapicera",
                 iconHTML: `<i class="fas fa-hand-pointer text-lg"></i>`,
-                before: "Tickets manchados de grasa. Anotar números a mano doble vez. Cero eficiencia.",
-                after: "Drag-and-Drop. El sistema escribe por vos. Más rápido, más limpio."
+                imgBefore: "i3.png",
+                videoAfter: "diez/v2.mp4"
             },
             {
                 id: 3,
                 title: "Cero Papel",
                 iconHTML: `<div class="relative"><i class="fas fa-ticket-alt text-lg transform -rotate-12"></i><i class="fas fa-wind absolute -right-3 top-1 text-[10px] opacity-70"></i></div>`,
-                before: "Tickets que vuelan o se pierden. Dependencia total del papel físico.",
-                after: "Cero tickets viajando. Trazabilidad total digital desde el monitor."
+                imgBefore: "i5.png",
+                videoAfter: "diez/v3.mp4"
             },
             {
                 id: 4,
                 title: "Conteo Automático",
                 iconHTML: `<div class="relative"><i class="fas fa-calculator text-lg text-slate-400"></i><div class="absolute inset-0 flex items-center justify-center"><div class="w-full h-0.5 bg-red-500 transform rotate-45"></div></div></div>`,
-                before: "Contando papeles arrugados a la 1 AM. El cansancio lleva al error.",
-                after: "Reportes instantáneos. Cierre de turno en 30 segundos con conteo exacto."
+                imgBefore: "i7.png",
+                videoAfter: "diez/v4.mp4"
             },
             {
                 id: 5,
                 title: "Dinero Blindado",
                 iconHTML: `<div class="relative flex items-center justify-center"><i class="fas fa-shield-alt text-lg"></i><span class="absolute text-[9px] font-black text-slate-900 pt-0.5">$</span></div>`,
-                before: "Pedidos entregados que se olvidan de cobrar. Dinero que se evapora.",
-                after: "Conciliación Blindada. Cada ID que salió debe ser rendido."
+                imgBefore: "i9.png",
+                videoAfter: "diez/v5.mp4"
             },
             {
                 id: 6,
                 title: "Historial de Viajes",
                 iconHTML: `<i class="fas fa-history text-lg"></i>`,
-                before: "'Esto no me lo diste'. Palabra contra palabra sin pruebas.",
-                after: "Historial Inmutable. Registro exacto de qué llevó cada uno y a qué hora."
+                imgBefore: "i11.png",
+                videoAfter: "diez/v6.mp4"
             },
             {
                 id: 7,
                 title: "No Duplicados",
                 iconHTML: `<div class="flex -space-x-2"><i class="fas fa-ban text-red-500"></i><i class="fas fa-ban text-red-500 opacity-70"></i></div>`,
-                before: "Dos repartidores se llevan el mismo pedido. Pédida doble.",
-                after: "Validación Atómica. El sistema bloquea asignaciones duplicadas."
+                imgBefore: "i13.png",
+                videoAfter: "diez/v7.mp4"
             },
             {
                 id: 8,
                 title: "Respuesta al Cliente",
                 iconHTML: `<div class="relative"><i class="fas fa-headset text-lg"></i><i class="fas fa-wifi absolute -top-2 -right-2 text-[8px] text-emerald-500"></i></div>`,
-                before: "'Ya debe estar por llegar'. Respuestas dudosas que destruyen reputación.",
-                after: "'Salió hace 12 minutos con Juan'. Precisión que fideliza clientes."
+                imgBefore: "i15.png",
+                videoAfter: "diez/v8.mp4"
             },
             {
                 id: 9,
                 title: "Ubicación Exacta",
                 iconHTML: `<i class="fas fa-crosshairs text-lg"></i>`,
-                before: "Revolver montaña de tickets buscando el #145 mientras suena el teléfono.",
-                after: "Ubicación exacta al instante escribiendo solo el ID."
+                imgBefore: "i2.png",
+                videoAfter: "diez/v9.mp4"
             },
             {
                 id: 10,
                 title: "Torre de Control",
                 iconHTML: `<i class="fas fa-broadcast-tower text-lg animate-pulse"></i>`,
-                before: "El 'me olvidé de anotar' es la excusa perfecta en el caos.",
-                after: "Torre de Control. La transparencia es total, la mentira no tiene lugar."
+                imgBefore: "i4.png",
+                videoAfter: "diez/v10.mp4"
             }
         ];
 
@@ -1402,8 +1438,10 @@
                 rotator.className = 'satellite-rotator';
 
                 // Create Inner Satellite (Handles Visuals + Float Animation)
-                const el = document.createElement('div');
+                const el = document.createElement('button'); // Changed to button for A11y
                 el.className = 'satellite';
+                el.type = 'button';
+                el.setAttribute('aria-label', `Ver mandamiento: ${cmd.title}`);
                 el.dataset.id = cmd.id;
                 // Use custom iconHTML
                 el.innerHTML = cmd.iconHTML;
@@ -1520,8 +1558,26 @@
 
             document.getElementById('modal-id').innerText = data.id.toString().padStart(2, '0');
             document.getElementById('modal-title').innerText = data.title;
-            document.getElementById('modal-text-before').innerText = data.before;
-            document.getElementById('modal-text-after').innerText = data.after;
+            // document.getElementById('modal-text-before').innerText = data.before; <-- REMOVED
+            // document.getElementById('modal-text-after').innerText = data.after; <-- REMOVED
+
+            const imgBefore = document.getElementById('modal-img-before');
+            const videoAfter = document.getElementById('modal-video-after');
+            
+            if (data.imgBefore) {
+                imgBefore.src = data.imgBefore;
+                imgBefore.classList.remove('hidden');
+            } else {
+                imgBefore.classList.add('hidden');
+            }
+            
+            if (data.videoAfter) {
+                videoAfter.src = data.videoAfter;
+                videoAfter.classList.remove('hidden');
+                videoAfter.play().catch(e => console.log("Video play failed:", e));
+            } else {
+                videoAfter.classList.add('hidden');
+            }
 
             document.getElementById('commandment-modal').classList.add('active');
             playTechPulse();

@@ -140,14 +140,12 @@
 
             <form id="lead-form" class="space-y-5" onsubmit="handleLeadSubmit(event)">
                 <div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2 block">Nombre
-                        del Dueño</label>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2 block">Comandante / Encargado</label>
                     <input type="text" id="lead-name" required placeholder="Ej: Juan Pérez"
                         class="w-full form-input px-5 py-4 rounded-xl font-medium">
                 </div>
                 <div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2 block">Nombre
-                        del Local</label>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1 mb-2 block">Base de Operaciones (Local)</label>
                     <input type="text" id="lead-local" required placeholder="Ej: Pizza House Ramos"
                         class="w-full form-input px-5 py-4 rounded-xl font-medium">
                 </div>
@@ -203,19 +201,270 @@
                 <input type="text" id="bot-input"
                     class="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500"
                     placeholder="Escribe tu nombre...">
-                <button onclick="enviarRespuesta()"
+                <button id="bot-send-btn"
                     class="w-full mt-2 bg-emerald-600 hover:bg-emerald-500 p-2 rounded-lg font-bold transition-all">Siguiente</button>
             </div>
         </div>
     </div>
     <script type="module">
         import { PLANES_CONFIG as planes } from '../src/config/plans.js';
+        
+        // --- FIREBASE CONFIG & ROUTER ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        let selectedPlan = '';
+        const firebaseConfig = {
+            apiKey: "AIzaSyAC0K_7GdPfZ1idnpa0VkwgZ9zBYOB4PRk",
+            authDomain: "crudfbtest.firebaseapp.com",
+            projectId: "crudfbtest",
+            storageBucket: "crudfbtest.firebasestorage.app",
+            messagingSenderId: "171088113288",
+            appId: "1:171088113288:web:eb8b6e333edce9be90b93d"
+        };
 
+        class FireRouter {
+            constructor() {
+                try {
+                    this.app = initializeApp(firebaseConfig);
+                    this.db = getFirestore(this.app);
+                    this.initialized = true;
+                    console.log("🔥 [Torre de Control] Firebase Conectado");
+                } catch (e) {
+                    console.error("Error connecting to Control Tower:", e);
+                    this.initialized = false;
+                }
+            }
+
+            async saveLead(data) {
+                if (!this.initialized) return { error: "Offline Mode" };
+                try {
+                    const docRef = await addDoc(collection(this.db, "leads_inbox"), {
+                        ...data,
+                        timestamp: serverTimestamp(),
+                        source: 'landing_planes',
+                        status: 'new'
+                    });
+                    console.log("Packet sent with ID: ", docRef.id);
+                    return { success: true, id: docRef.id };
+                } catch (e) {
+                    console.error("Error sending packet:", e);
+                    return { error: e.message };
+                }
+            }
+
+            async saveChatSession(sessionData) {
+                if (!this.initialized) return;
+                try {
+                    await addDoc(collection(this.db, "chat_sessions"), {
+                        ...sessionData,
+                        savedAt: serverTimestamp()
+                    });
+                } catch(e) { console.error("Chat log error:", e); }
+            }
+        }
+
+        const fireRouter = new FireRouter();
+
+        // --- CHATBOT CORE (ES6 Class) ---
+        class ChatbotCore {
+            constructor() {
+                this.step = 0;
+                this.data = { nombre: '', local: '', plan: '' };
+                this.isOpen = false;
+                this.history = []; // For session logging
+                
+                // UI Elements
+                this.container = document.getElementById('chatbot-container');
+                this.messagesArea = document.getElementById('chat-messages');
+                this.input = document.getElementById('bot-input');
+                this.sendBtn = document.getElementById('bot-send-btn');
+                this.triggerBtn = document.getElementById('chat-trigger');
+
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                this.triggerBtn.onclick = () => this.toggle();
+                this.container.querySelector('button.text-white\\/50').onclick = () => this.toggle(); // Close btn
+                
+                this.sendBtn.onclick = () => this.handleSend();
+                this.input.onkeypress = (e) => {
+                    if (e.key === 'Enter') this.handleSend();
+                };
+            }
+
+            toggle(forceState) {
+                if (forceState === 'open') {
+                    this.container.classList.remove('hidden');
+                    this.isOpen = true;
+                } else if (forceState === 'close') {
+                    this.container.classList.add('hidden');
+                    this.isOpen = false;
+                } else {
+                    this.container.classList.toggle('hidden');
+                    this.isOpen = !this.container.classList.contains('hidden');
+                }
+            }
+
+            startPlanFlow(planName) {
+                this.data.plan = planName;
+                this.step = 0;
+                this.messagesArea.innerHTML = ''; // Clear chat
+                this.history = [];
+                
+                this.botSay(`¡Afirmativo! El plan <span class="text-emerald-400 font-bold">${planName}</span> es estratégico. ¿Cuál es su nombre, Comandante?`);
+                
+                const inputArea = document.getElementById('chat-input-area');
+                if (inputArea) {
+                    inputArea.innerHTML = `
+                    <input type="text" id="bot-input"
+                        class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 mb-2"
+                        placeholder="Ingrese su nombre...">
+                    <button id="bot-send-btn"
+                        class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-lg font-black uppercase tracking-tighter transition-all">Confirmar</button>
+                    `;
+                } else {
+                    console.error("Critical: Chat input container not found!");
+                }
+                
+                // Re-bind dynamic elements
+                this.input = document.getElementById('bot-input');
+                this.sendBtn = document.getElementById('bot-send-btn');
+                this.bindEvents(); // Re-attach events to new elements
+
+                this.toggle('open');
+                setTimeout(() => this.input.focus(), 300);
+            }
+
+            handleSend() {
+                const text = this.input.value.trim();
+                if (!text) return;
+
+                this.userSay(text);
+                this.input.value = '';
+
+                // State Machine
+                if (this.step === 0) {
+                    this.data.nombre = text;
+                    this.botSay(`Entendido, ${text}. ¿Cuál es su Base de Operaciones? (Nombre del Local)`);
+                    this.input.placeholder = "Nombre del local...";
+                    this.step++;
+                } else if (this.step === 1) {
+                    this.data.local = text;
+                    this.finishFlow();
+                }
+            }
+
+            finishFlow() {
+                this.botSay(`Generando enlace encriptado para <span class="text-white font-bold">${this.data.local}</span>... Un oficial lo espera.`);
+                
+                // Save Session to Firebase
+                fireRouter.saveChatSession({
+                    lead: this.data,
+                    history: this.history
+                });
+
+                const msg = `[ALTA PRIORIDAD] Soy ${this.data.nombre} de ${this.data.local}. Solicito despliegue del plan ${this.data.plan}.`;
+                const encoded = encodeURIComponent(msg);
+                const waLink = `https://wa.me/5491112345678?text=${encoded}`;
+
+                document.getElementById('chat-input-area').innerHTML = `
+                    <a href="${waLink}" target="_blank" 
+                       class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-xl font-black uppercase tracking-tighter flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02]">
+                        <i class="fab fa-whatsapp text-xl"></i> Conectar con Base
+                    </a>
+                `;
+            }
+
+            botSay(html) {
+                this.addMessage(html, 'bot');
+            }
+
+            userSay(text) {
+                this.addMessage(text, 'user');
+            }
+
+            addMessage(content, sender) {
+                this.history.push({ sender, content, time: new Date().toISOString() });
+                
+                const div = document.createElement('div');
+                div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
+                
+                const bubble = document.createElement('div');
+                bubble.className = sender === 'user' 
+                    ? "bg-emerald-600/20 text-emerald-100 p-3 rounded-2xl rounded-tr-none max-w-[80%] border border-emerald-500/20"
+                    : "bg-white/5 text-slate-300 p-3 rounded-2xl rounded-tl-none max-w-[80%] border border-white/10";
+                
+                bubble.innerHTML = content;
+                div.appendChild(bubble);
+                this.messagesArea.appendChild(div);
+                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+            }
+        }
+
+        const chatbot = new ChatbotCore();
+
+        // --- LEAD FORM LOGIC ---
+        // Expose functions for HTML onclick attributes (bridge between HTML and Modules)
+        window.openLeadModal = (planName) => {
+            window.selectedPlan = planName;
+            document.getElementById('modal-plan-title').innerText = planName;
+            document.getElementById('lead-modal').classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('lead-modal').classList.remove('active');
+        };
+
+        window.handleLeadSubmit = async (event) => {
+            event.preventDefault();
+            
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            
+            // Visual Feedback: Processing
+            btn.innerHTML = '<i class="fas fa-satellite-dish animate-pulse"></i> Sincronizando...';
+            btn.disabled = true;
+
+            const leadData = {
+                plan: window.selectedPlan,
+                nombre: document.getElementById('lead-name').value,
+                local: document.getElementById('lead-local').value,
+                flota: document.getElementById('lead-fleet').value
+            };
+
+            // Send to Firestore
+            await fireRouter.saveLead(leadData);
+
+            // Success Animation
+            btn.innerHTML = '<i class="fas fa-check"></i> Datos Recibidos';
+            btn.classList.replace('btn-emerald', 'bg-emerald-600');
+
+            setTimeout(() => {
+                // WhatsApp Bridge
+                const msg = `[WEB FORM] Hola, soy ${leadData.nombre} de ${leadData.local}. Solicito activación del plan ${leadData.plan} para ${leadData.flota} repartidores.`;
+                const encoded = encodeURIComponent(msg);
+                window.open(`https://wa.me/5491112345678?text=${encoded}`, '_blank');
+                
+                window.closeModal();
+                event.target.reset();
+                
+                // Restore Button
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    btn.classList.add('btn-emerald');
+                }, 500);
+            }, 1000);
+        };
+
+        // Bridge for Plan Cards
+        window.startPlanChat = (planName) => chatbot.startPlanFlow(planName);
+        window.toggleChat = () => chatbot.toggle();
+
+        // --- RENDER PLANES ---
         function renderPlanes() {
             const container = document.getElementById('pricing-container');
-
             container.innerHTML = planes.map(plan => `
                 <div class="glass-card rounded-[2.5rem] p-10 flex flex-col relative ${plan.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20 shadow-2xl shadow-emerald-500/10' : ''}">
                     ${plan.popular ? '<span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/30">Más Recomendado</span>' : ''}
@@ -252,169 +501,7 @@
             `).join('');
         }
 
-        // Modal Logic
-        window.openLeadModal = function (planName) {
-            selectedPlan = planName;
-            document.getElementById('modal-plan-title').innerText = planName;
-            document.getElementById('lead-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.closeModal = function () {
-            document.getElementById('lead-modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        window.handleLeadSubmit = function (event) {
-            event.preventDefault();
-
-            const leadData = {
-                plan: selectedPlan,
-                nombre: document.getElementById('lead-name').value,
-                local: document.getElementById('lead-local').value,
-                flota: document.getElementById('lead-fleet').value,
-                timestamp: new Date().toISOString()
-            };
-
-            console.log("Simulando envío a Firestore:", leadData);
-
-            // Aquí se inyectaría la lógica de Firebase:
-            // db.collection('leads').add(leadData)...
-
-            // Feedback visual exitoso
-            const btn = event.target.querySelector('button');
-            const originalText = btn.innerText;
-            btn.innerHTML = '<i class="fas fa-circle-notch animate-spin"></i> Procesando...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fas fa-check"></i> ¡Listo!';
-                btn.classList.replace('btn-emerald', 'bg-emerald-600');
-
-                setTimeout(() => {
-                    // Salto a WhatsApp
-                    const msg = `Hola! Soy ${leadData.nombre} de ${leadData.local}. Acabo de solicitar el ${leadData.plan} para mi flota de ${leadData.flota} repartidores.`;
-                    const encoded = encodeURIComponent(msg);
-                    window.open(`https://wa.me/TU_NUMERO_AQUI?text=${encoded}`, '_blank');
-                    window.closeModal();
-
-                    // Reset formulario
-                    event.target.reset();
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                    btn.classList.add('btn-emerald');
-                }, 1000);
-            }, 1500);
-        }
-
-
-        let currentStep = 0;
-        let leadData = { nombre: '', local: '', plan: '' };
-
-        window.toggleChat = function (forceState) {
-            const chat = document.getElementById('chatbot-container');
-            if (forceState === 'open') {
-                chat.classList.remove('hidden');
-            } else if (forceState === 'close') {
-                chat.classList.add('hidden');
-            } else {
-                chat.classList.toggle('hidden');
-            }
-        }
-
-        window.startPlanChat = function (planName) {
-            leadData.plan = planName;
-            currentStep = 0;
-
-            // Reset chat messages
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML = '';
-
-            // Initial greeting
-            botPregunta(`¡Excelente elección! El plan <span class="text-emerald-400 font-bold">${planName}</span> es el más buscado. ¿Cuál es tu nombre?`);
-
-            // Prepare input
-            const inputArea = document.getElementById('chat-input-area');
-            inputArea.innerHTML = `
-                <input type="text" id="bot-input"
-                    class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 mb-2"
-                    placeholder="Escribe tu nombre...">
-                <button onclick="enviarRespuesta()"
-                    class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-lg font-black uppercase tracking-tighter transition-all">Siguiente</button>
-            `;
-
-            window.toggleChat('open');
-
-            // Auto-focus input
-            setTimeout(() => document.getElementById('bot-input').focus(), 300);
-        }
-
-        window.enviarRespuesta = function () {
-            const input = document.getElementById('bot-input');
-            const valor = input.value.trim();
-            if (!valor) return;
-
-            const chatMessages = document.getElementById('chat-messages');
-
-            // 1. Mostrar respuesta del usuario
-            chatMessages.innerHTML += `
-                <div class="flex justify-end mb-4">
-                    <div class="bg-emerald-600/20 text-emerald-100 p-3 rounded-2xl rounded-tr-none max-w-[80%] border border-emerald-500/20">
-                        ${valor}
-                    </div>
-                </div>`;
-
-            // 2. Lógica de pasos
-            if (currentStep === 0) {
-                leadData.nombre = valor;
-                botPregunta(`¡Mucho gusto, ${valor}! Ahora cuéntame, ¿cuál es el nombre de tu local?`);
-                input.placeholder = "Nombre del local...";
-                input.value = "";
-                currentStep++;
-            } else if (currentStep === 1) {
-                leadData.local = valor;
-                finalizarChat();
-            }
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function botPregunta(texto) {
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML += `
-                <div class="flex justify-start mb-4">
-                    <div class="bg-white/5 text-slate-300 p-3 rounded-2xl rounded-tl-none max-w-[80%] border border-white/10">
-                        ${texto}
-                    </div>
-                </div>`;
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function finalizarChat() {
-            botPregunta(`¡Perfecto! Todo listo. Un asesor te está esperando para activar el <span class="text-emerald-400 font-bold">${leadData.plan}</span> en <span class="text-white font-bold">${leadData.local}</span>.`);
-
-            const msg = `Hola, soy ${leadData.nombre} de ${leadData.local} y quiero contratar el plan ${leadData.plan}`;
-            const encoded = encodeURIComponent(msg);
-            const waLink = `https://wa.me/5491112345678?text=${encoded}`; // Reemplazar con número real si es necesario
-
-            document.getElementById('chat-input-area').innerHTML = `
-                <a href="${waLink}" target="_blank" 
-                   class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-xl font-black uppercase tracking-tighter flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02]">
-                    <i class="fab fa-whatsapp text-xl"></i> Hablar con un Asesor
-                </a>
-            `;
-        }
-
-        window.addEventListener('load', () => {
-            renderPlanes();
-            // Saludo inicial genérico si no se abre por un plan
-            setTimeout(() => {
-                const chatMessages = document.getElementById('chat-messages');
-                if (chatMessages.children.length === 1 && chatMessages.innerText.includes('¿Con quién tengo el gusto')) {
-                    // Ya hay un saludo por defecto en el HTML, lo dejamos o lo reemplazamos
-                }
-            }, 3000);
-        });
+        window.addEventListener('load', renderPlanes);
     </script>
 </body>
 

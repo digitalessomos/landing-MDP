@@ -268,137 +268,277 @@
         // --- CHATBOT CORE (ES6 Class) ---
         class ChatbotCore {
             constructor() {
-                this.step = 0;
-                this.data = { nombre: '', local: '', plan: '' };
+                this.step = 'HOOK';
+                this.data = { context: '', volume: '', specialty: '', nombre: '', local: '', plan: '' };
                 this.isOpen = false;
-                this.history = []; // For session logging
+                this.history = [];
                 
-                // UI Elements
                 this.container = document.getElementById('chatbot-container');
                 this.messagesArea = document.getElementById('chat-messages');
-                this.input = document.getElementById('bot-input');
-                this.sendBtn = document.getElementById('bot-send-btn');
+                this.inputArea = document.getElementById('chat-input-area');
                 this.triggerBtn = document.getElementById('chat-trigger');
 
                 this.bindEvents();
+                this.initFlow();
             }
 
             bindEvents() {
                 this.triggerBtn.onclick = () => this.toggle();
-                this.container.querySelector('button.text-white\\/50').onclick = () => this.toggle(); // Close btn
+                this.container.querySelector('button.text-white\\/50').onclick = () => this.toggle();
+            }
+
+            toggle(state) {
+                this.isOpen = (state === 'open') ? true : (state === 'close') ? false : !this.isOpen;
+                this.container.classList.toggle('hidden', !this.isOpen);
+                if (this.isOpen) setTimeout(() => this.scrollToBottom(), 100);
+            }
+
+            scrollToBottom() {
+                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+            }
+
+            initFlow() {
+                this.messagesArea.innerHTML = '';
+                this.botSay("¡Hola! 👋 Soy el estratega virtual de <span class='text-emerald-400 font-black'>RutaTotal 360</span>.");
+                setTimeout(() => {
+                    this.botSay("Antes de hablar de software, cuéntame: ¿Sientes que tu logística es un caos o solo quieres escalar lo que ya funciona?");
+                    this.renderOptions([
+                        { text: "¡Es un caos total!", value: "caos" },
+                        { text: "Quiero escalar mis ventas.", value: "escalar" },
+                        { text: "Solo estoy curioseando.", value: "curioso" }
+                    ]);
+                }, 800);
+            }
+
+            botSay(html) {
+                this.addMessage(html, 'bot');
+                this.history.push({ sender: 'bot', content: html, time: new Date().toISOString() });
+            }
+
+            userSay(text) {
+                this.addMessage(text, 'user');
+                this.history.push({ sender: 'user', content: text, time: new Date().toISOString() });
+            }
+
+            addMessage(content, sender) {
+                const div = document.createElement('div');
+                div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`;
+                const bubble = document.createElement('div');
+                bubble.className = sender === 'user' 
+                    ? "bg-emerald-600/20 text-emerald-100 p-3 rounded-2xl rounded-tr-none max-w-[85%] border border-emerald-500/20"
+                    : "bg-white/5 text-slate-300 p-3 rounded-2xl rounded-tl-none max-w-[85%] border border-white/10";
+                bubble.innerHTML = content;
+                div.appendChild(bubble);
+                this.messagesArea.appendChild(div);
+                this.scrollToBottom();
+            }
+
+            renderOptions(options) {
+                this.inputArea.innerHTML = '';
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-1 gap-2 w-full";
                 
-                this.sendBtn.onclick = () => this.handleSend();
-                this.input.onkeypress = (e) => {
-                    if (e.key === 'Enter') this.handleSend();
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left bg-white/5 hover:bg-emerald-600/20 border border-white/10 hover:border-emerald-500/50 p-3 rounded-xl text-xs font-bold text-slate-300 transition-all transform hover:scale-[1.02] active:scale-95";
+                    btn.innerHTML = opt.text;
+                    btn.onclick = () => this.handleSelection(opt);
+                    grid.appendChild(btn);
+                });
+                this.inputArea.appendChild(grid);
+            }
+
+            handleSelection(opt) {
+                this.userSay(opt.text);
+                
+                if (this.step === 'HOOK') {
+                    if (opt.value === 'curioso') {
+                        this.botSay("¡Genial! El que curiosea es porque sabe que siempre hay algo que mejorar. 💡");
+                        setTimeout(() => {
+                            this.botSay("Mira este dato: Los negocios que automatizan su logística antes de que sea un caos, escalan un <b>40% más rápido</b>. � ¿Te gustaría ver un ejemplo real de éxito?");
+                            this.renderOptions([
+                                { text: "Sí, muéstrame cómo.", value: "si_escalar" },
+                                { text: "Solo quiero ver precios.", value: "escalar" }
+                            ]);
+                        }, 800);
+                    } else {
+                        this.data.context = opt.value;
+                        this.step = 'VOLUME';
+                        this.nextStep();
+                    }
+                } else if (this.step === 'VOLUME' || opt.value === 'si_escalar') {
+                    this.data.volume = opt.value === 'si_escalar' ? '5-10' : opt.value; // Default to medium if re-engaging
+                    this.step = 'SPECIALTY';
+                    this.nextStep();
+                } else if (this.step === 'SPECIALTY') {
+                    this.data.specialty = opt.value;
+                    this.step = 'AHA';
+                    this.nextStep();
+                }
+            }
+
+            nextStep() {
+                this.inputArea.innerHTML = '<div class="flex justify-center p-2"><i class="fas fa-circle-notch animate-spin text-emerald-500"></i></div>';
+                
+                setTimeout(() => {
+                    if (this.step === 'VOLUME') {
+                        this.botSay("Entendido. Para darte el diagnóstico correcto, ¿cuántos repartidores manejas actualmente?");
+                        this.renderOptions([
+                            { text: "1 a 5 Repartidores", value: "1-5" },
+                            { text: "5 a 10 Repartidores", value: "5-10" },
+                            { text: "+10 Repartidores", value: "+10" }
+                        ]);
+                    } 
+                    else if (this.step === 'SPECIALTY') {
+                        this.botSay("Perfecto. Cada cocina es un mundo diferente. ¿Cuál es la especialidad de tu local?");
+                        this.renderOptions([
+                            { text: "<i class='fas fa-pizza-slice mr-2'></i> Pizzería", value: "pizzeria" },
+                            { text: "<i class='fas fa-fish mr-2'></i> Sushi", value: "sushi" },
+                            { text: "<i class='fas fa-hamburger mr-2'></i> Hamburguesas", value: "burgers" },
+                            { text: "<i class='fas fa-utensils mr-2'></i> Restaurante Tradicional", value: "restaurante" }
+                        ]);
+                    }
+                    else if (this.step === 'AHA') {
+                        this.generateAhaMoment();
+                    }
+                }, 800);
+            }
+
+            generateAhaMoment() {
+                const { volume, specialty } = this.data;
+                let script = "";
+
+                if (specialty === 'pizzeria') {
+                    if (volume === '1-5') {
+                        script = "Gestionar repartidores en una pizzería es una pesadilla de tiempos. Una optimización del 15% en tus rutas te ahorraría combustible y evitaría que las pizzas lleguen frías. ¿Quieres ver cómo lo automatizamos?";
+                    } else {
+                        script = "En el negocio de la pizza, el tiempo es calidad. Si tus repartidores se pierden o se amontonan, la masa llega fría y el cliente no vuelve. Con tantas unidades, necesitas rutas optimizadas. ¿Listo para que lleguen siempre calientes?";
+                    }
+                } else if (specialty === 'sushi') {
+                    if (volume === '1-5') {
+                        script = "En el sushi, 10 minutos de retraso arruinan la experiencia. Con varios repartidores, el dueño suele perder horas coordinando. ¿Qué harías si recuperaras esas horas garantizando frescura?";
+                    } else {
+                        script = "El sushi es arte y logística de precisión. Un minuto de más afecta la frescura. Para una operación de muchos repartidores, necesitas trazabilidad total. Evita el '¿donde está mi pedido?'. ¿Te gustaría automatizarlo?";
+                    }
+                } else if (specialty === 'burgers') {
+                    if (volume === '1-5') {
+                        script = "Tus 'horas pico' son brutales. Cuando caen 20 pedidos en 10 minutos, el caos del mostrador se traslada a la calle. Necesitas un despacho quirúrgico. ¿Quieres ver cómo despejamos tu mostrador?";
+                    } else {
+                        script = "<b>¡El Fin de las Preguntas al Aire!</b> 🛑<br><br>Basta de preguntar: <i>¿Quién se llevó el pedido 45? ¿Hace cuánto salió?</i>. Con nuestra interfaz visual, solo miras la pantalla y ves al repartidor y el tiempo exacto. ¿Listo para la Torre de Control?";
+                    }
+                } else { // Restaurante
+                    if (volume === '1-5') {
+                        script = "Gestionar salón y delivery al mismo tiempo es de malabaristas. Vamos a profesionalizar tu logística para que te enfoques en el sabor, no en el mapa. ¿Te enviamos la propuesta?";
+                    } else {
+                        script = "<b>Torre de Control Digital</b> 🗼<br><br>En un restaurante con mucho flujo, no se necesita preguntar. Nuestra trazabilidad 360 por colores te permite saber quién tiene cada pedido solo con mirar el monitor. ¿Te gustaría implementarlo?";
+                    }
+                }
+
+                this.botSay(script);
+                
+                // FASE 4.5: El Puente de Valor (Micro-Demostración)
+                setTimeout(() => {
+                    this.botSay("Así se ve tu operación bajo control en <span class='text-emerald-400 font-black'>Monitor de Pedidos</span>. ¿Te lo imaginas en tu local?");
+                    this.botSay(`<div class="rounded-xl overflow-hidden border border-emerald-500/30 shadow-2xl mt-2">
+                        <video src="../n2.mp4" autoplay loop muted playsinline class="w-full"></video>
+                    </div>`);
+                    
+                    setTimeout(() => {
+                        this.botSay("Para enviarte el análisis de costos y la propuesta personalizada, ¿con quién tengo el gusto de hablar?");
+                        this.step = 'LEAD_NAME';
+                        this.renderInput("Ingrese su nombre...");
+                    }, 4000);
+                }, 2000);
+            }
+
+            renderInput(placeholder) {
+                this.inputArea.innerHTML = `
+                    <div class="flex flex-col gap-2 w-full">
+                        <input type="text" id="bot-input" 
+                            class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-emerald-500 text-sm" 
+                            placeholder="${placeholder}">
+                        <button id="bot-send-btn" class="bg-emerald-600 hover:bg-emerald-500 p-4 rounded-xl font-black uppercase tracking-tighter transition-all active:scale-95">Continuar</button>
+                    </div>
+                `;
+                const input = document.getElementById('bot-input');
+                const btn = document.getElementById('bot-send-btn');
+                
+                const submit = () => {
+                    const val = input.value.trim();
+                    if (val) this.handleTextInput(val);
                 };
+
+                btn.onclick = submit;
+                input.onkeypress = (e) => { if (e.key === 'Enter') submit(); };
+                setTimeout(() => input.focus(), 200);
             }
 
-            toggle(forceState) {
-                if (forceState === 'open') {
-                    this.container.classList.remove('hidden');
-                    this.isOpen = true;
-                } else if (forceState === 'close') {
-                    this.container.classList.add('hidden');
-                    this.isOpen = false;
-                } else {
-                    this.container.classList.toggle('hidden');
-                    this.isOpen = !this.container.classList.contains('hidden');
+            handleTextInput(val) {
+                if (this.step === 'LEAD_CONTACT') {
+                    // Validación simple de Email o Teléfono (mínimo 6 dígitos para tel)
+                    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+                    const isPhone = /^\+?[\d\s-]{6,}$/.test(val);
+
+                    if (!isEmail && !isPhone) {
+                        this.botSay("Ups, parece que faltó un dígito o el formato es inválido. 😅 Necesito tu contacto para enviarte el diagnóstico personalizado.");
+                        return; // Detener flujo hasta que sea válido
+                    }
                 }
-            }
 
-            startPlanFlow(planName) {
-                this.data.plan = planName;
-                this.step = 0;
-                this.messagesArea.innerHTML = ''; // Clear chat
-                this.history = [];
-                
-                this.botSay(`¡Afirmativo! El plan <span class="text-emerald-400 font-bold">${planName}</span> es estratégico. ¿Cuál es su nombre, Comandante?`);
-                
-                const inputArea = document.getElementById('chat-input-area');
-                if (inputArea) {
-                    inputArea.innerHTML = `
-                    <input type="text" id="bot-input"
-                        class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-emerald-500 mb-2"
-                        placeholder="Ingrese su nombre...">
-                    <button id="bot-send-btn"
-                        class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-lg font-black uppercase tracking-tighter transition-all">Confirmar</button>
-                    `;
-                } else {
-                    console.error("Critical: Chat input container not found!");
-                }
-                
-                // Re-bind dynamic elements
-                this.input = document.getElementById('bot-input');
-                this.sendBtn = document.getElementById('bot-send-btn');
-                this.bindEvents(); // Re-attach events to new elements
-
-                this.toggle('open');
-                setTimeout(() => this.input.focus(), 300);
-            }
-
-            handleSend() {
-                const text = this.input.value.trim();
-                if (!text) return;
-
-                this.userSay(text);
-                this.input.value = '';
-
-                // State Machine
-                if (this.step === 0) {
-                    this.data.nombre = text;
-                    this.botSay(`Entendido, ${text}. ¿Cuál es su Base de Operaciones? (Nombre del Local)`);
-                    this.input.placeholder = "Nombre del local...";
-                    this.step++;
-                } else if (this.step === 1) {
-                    this.data.local = text;
+                this.userSay(val);
+                if (this.step === 'LEAD_NAME') {
+                    this.data.nombre = val;
+                    this.botSay(`Excelente Comandante ${val}. ¿Cómo se llama su Base de Operaciones (Local)?`);
+                    this.step = 'LEAD_LOCAL';
+                    this.renderInput("Nombre de su local...");
+                } else if (this.step === 'LEAD_LOCAL') {
+                    this.data.local = val;
+                    this.botSay("¡Perfecto! Un último detalle: ¿Email o WhatsApp para enviarte el análisis de costos?");
+                    this.step = 'LEAD_CONTACT';
+                    this.renderInput("Email o WhatsApp...");
+                } else if (this.step === 'LEAD_CONTACT') {
+                    this.data.contacto = val;
                     this.finishFlow();
                 }
             }
 
             finishFlow() {
-                this.botSay(`Generando enlace encriptado para <span class="text-white font-bold">${this.data.local}</span>... Un oficial lo espera.`);
+                this.botSay("<b>¡Análisis completado!</b> 🎯 El sistema está generando tu propuesta estratégica.");
                 
-                // Save Session to Firebase
+                // Recomendación de Plan
+                const planRecomendado = (this.data.volume === '1-5') ? 'Fase 01: Organización' : 'Fase 02: Conectividad';
+                this.data.plan = planRecomendado;
+
+                // Mapeo de CTAs personalizados por nicho
+                const ctaMap = {
+                    pizzeria: "Optimizar mis entregas de Pizza",
+                    sushi: "Garantizar frescura en mis envíos",
+                    burgers: "Eliminar el caos en mi mostrador",
+                    restaurante: "Activar mi Torre de Control"
+                };
+                const ctaText = ctaMap[this.data.specialty] || "Obtener mi Propuesta Personalizada";
+
+                // Sync with Firebase
                 fireRouter.saveChatSession({
                     lead: this.data,
                     history: this.history
                 });
 
-                const msg = `[ALTA PRIORIDAD] Soy ${this.data.nombre} de ${this.data.local}. Solicito despliegue del plan ${this.data.plan}.`;
-                const encoded = encodeURIComponent(msg);
-                const waLink = `https://wa.me/5491112345678?text=${encoded}`;
-
                 document.getElementById('chat-input-area').innerHTML = `
-                    <a href="${waLink}" target="_blank" 
-                       class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-xl font-black uppercase tracking-tighter flex items-center justify-center gap-3 transition-all transform hover:scale-[1.02]">
-                        <i class="fab fa-whatsapp text-xl"></i> Conectar con Base
-                    </a>
+                    <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center">
+                        <p class="text-[10px] font-black uppercase text-emerald-400 mb-2">Plan Sugerido</p>
+                        <h4 class="text-white font-black mb-4">${planRecomendado}</h4>
+                        <button onclick="window.location.reload()" class="text-[9px] text-slate-500 uppercase font-black hover:text-white transition-colors">Iniciar nuevo diagnóstico</button>
+                    </div>
                 `;
-            }
 
-            botSay(html) {
-                this.addMessage(html, 'bot');
-            }
-
-            userSay(text) {
-                this.addMessage(text, 'user');
-            }
-
-            addMessage(content, sender) {
-                this.history.push({ sender, content, time: new Date().toISOString() });
-                
-                const div = document.createElement('div');
-                div.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
-                
-                const bubble = document.createElement('div');
-                bubble.className = sender === 'user' 
-                    ? "bg-emerald-600/20 text-emerald-100 p-3 rounded-2xl rounded-tr-none max-w-[80%] border border-emerald-500/20"
-                    : "bg-white/5 text-slate-300 p-3 rounded-2xl rounded-tl-none max-w-[80%] border border-white/10";
-                
-                bubble.innerHTML = content;
-                div.appendChild(bubble);
-                this.messagesArea.appendChild(div);
-                this.messagesArea.scrollTop = this.messagesArea.scrollHeight;
+                setTimeout(() => {
+                    const msg = `[ALTA PRIORIDAD] Soy ${this.data.nombre} de ${this.data.local} (${this.data.specialty}). Solicito presupuesto para ${this.data.volume} repartidores.`;
+                    const encoded = encodeURIComponent(msg);
+                    const waLink = `https://wa.me/5491112345678?text=${encoded}`;
+                    
+                    this.botSay(`<a href="${waLink}" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-xl text-center font-black uppercase tracking-tight text-xs mt-2 animate-bounce">${ctaText}</a>`);
+                }, 1000);
             }
         }
 

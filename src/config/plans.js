@@ -67,9 +67,10 @@ export const PLANES_CONFIG = [
         cta: "Solicitar Auditoría",
         caracteristicas: [
             "Todo lo incluido en Fase 02",
-            "IA predictiva de demanda horaria",
-            "Integración total con Marketplaces",
-            "Algoritmo de optimización de rutas",
+            "App para el Repartidor(trazabilidad total en la última milla)",
+            "Trazabilidad absoluta en la calle",
+            "Control total fuera del local",
+            "Predicciones de clientes demorados e inconsistencias",
             "Soporte prioritario 24/7",
             "Backup Local redundante"
         ]

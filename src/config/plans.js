@@ -67,10 +67,11 @@ export const PLANES_CONFIG = [
         cta: "Solicitar Auditoría",
         caracteristicas: [
             "Todo lo incluido en Fase 02",
-            "App para el Repartidor(trazabilidad total en la última milla)",
-            "Trazabilidad absoluta en la calle",
-            "Control total fuera del local",
-            "Predicciones de clientes demorados e inconsistencias",
+            "Driver App Premium (Logística de Última Milla)",
+            //"Trazabilidad absoluta en la calle",
+            "Sistema de Multi-Atención Inteligente",
+            "Protocolo de Acción Directa: Cero-Ruido",
+            "Alertas Hápticas Torre de Control",
             "Soporte prioritario 24/7",
             "Backup Local redundante"
         ]
